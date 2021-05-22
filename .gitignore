@@ -1,0 +1,8 @@
+# ignore generated mat files
+*.mat
+# ignore generated graphic files
+*.eps
+*.pdf
+*.fig
+# ignore generated folder files
+*.DS_Store
