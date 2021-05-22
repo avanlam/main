@@ -1,0 +1,7 @@
+Factor#  LB     UB    Name  - title Line - this line should remain here
+1       0.3  1.15    v      % (0.35, 0.7, 1) Maximal chemical reaction rate for the transcriptional inhibition
+2       0.3  1.15    K      % (1) Half-time factor (Michaelis-Menten) for the transcriptional inhibition
+3       0.3  1.15    k      % (0.35, 0.7) for the clock protein
+4       0.3  1.15    v_C    % (0.4) Maximal chemical reaction rate for inter-neuronal coupling term
+5       0.3  1.15    K_C    % (1) Half-time factor for inter-neuronal coupling term
+6       20     28     Omega  % Period of the sinusoidal light external force 
