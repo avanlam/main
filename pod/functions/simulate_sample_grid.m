@@ -1,15 +1,11 @@
-function [full_outp, rom_outp, prom_outp, deim_outp] = simulate_sample_grid(x_all, y_all, params, tau, final_time, x0, dt, n_asympt, U, U_pod, V_pod)
-
-m = size(x_all, 2);
-n = size(y_all, 2);
+function [full_outp, rom_outp, prom_outp, deim_outp] = simulate_sample_grid(sample, gridsize, params, tau, final_time, x0, dt, n_asympt, U, U_pod, V_pod)
 
 num_n = numel(tau);
 
-[tmp1,tmp2]=meshgrid(x_all,y_all);
-
-for j = 1 : numel(tmp1)
-    params.nu(6) = tmp1(j);
-    params.omega = 2*pi/tmp2(j);
+for j = 1 : size(sample, 1)
+    params.omega = 2*pi/sample(j, 1);
+    params.L0 = sample(j, 2);
+    params.nu(6) = sample(j, 3);
     
     % Full order model (FOM)
     tic;
@@ -49,43 +45,43 @@ end
 
 full_outp.time = time_full;
 full_outp.x = x_full;
-full_outp.synchrony = permute(reshape(synchrony_full, size(synchrony_full, 1), n, m), [1 3 2]);
-full_outp.sync_param = reshape(sync_param_full, n, m)';
-full_outp.avg_gene = permute(reshape(avg_gene_conc_full, size(avg_gene_conc_full, 1), n, m), [1 3 2]);
-full_outp.spectral = reshape(spectral_ampl_fact_full, n, m)';
-full_outp.period = reshape(estimated_period_full, n, m)';
-full_outp.order_param = permute(reshape(order_param_X_full, size(order_param_X_full, 1), n, m), [1 3 2]);
-full_outp.elapsed_time = reshape(elapsed_time_full, n, m)';
+full_outp.synchrony = reshape(synchrony_full, size(synchrony_full, 1), gridsize(1), gridsize(2), gridsize(3));
+full_outp.sync_param = reshape(sync_param_full, gridsize(1), gridsize(2), gridsize(3));
+full_outp.avg_gene = reshape(avg_gene_conc_full, size(avg_gene_conc_full, 1), gridsize(1), gridsize(2), gridsize(3));
+full_outp.spectral = reshape(spectral_ampl_fact_full, gridsize(1), gridsize(2), gridsize(3));
+full_outp.period = reshape(estimated_period_full, gridsize(1), gridsize(2), gridsize(3));
+full_outp.order_param = reshape(order_param_X_full, size(order_param_X_full, 1), gridsize(1), gridsize(2), gridsize(3));
+full_outp.elapsed_time = reshape(elapsed_time_full, gridsize(1), gridsize(2), gridsize(3));
 
 rom_outp.time = time_rom;
 rom_outp.x = x_rom;
-rom_outp.synchrony = permute(reshape(synchrony_rom, size(synchrony_rom, 1), n, m), [1 3 2]);
-rom_outp.sync_param = reshape(sync_param_rom, n, m)';
-rom_outp.avg_gene = permute(reshape(avg_gene_conc_rom, size(avg_gene_conc_rom, 1), n, m), [1 3 2]);
-rom_outp.spectral = reshape(spectral_ampl_fact_rom, n, m)';
-rom_outp.period = reshape(estimated_period_rom, n, m)';
-rom_outp.order_param = permute(reshape(order_param_X_rom, size(order_param_X_rom, 1), n, m), [1 3 2]);
-rom_outp.elapsed_time = reshape(elapsed_time_rom, n, m)';
+rom_outp.synchrony = reshape(synchrony_rom, size(synchrony_rom, 1), gridsize(1), gridsize(2), gridsize(3));
+rom_outp.sync_param = reshape(sync_param_rom, gridsize(1), gridsize(2), gridsize(3));
+rom_outp.avg_gene = reshape(avg_gene_conc_rom, size(avg_gene_conc_rom, 1), gridsize(1), gridsize(2), gridsize(3));
+rom_outp.spectral = reshape(spectral_ampl_fact_rom, gridsize(1), gridsize(2), gridsize(3));
+rom_outp.period = reshape(estimated_period_rom, gridsize(1), gridsize(2), gridsize(3));
+rom_outp.order_param = reshape(order_param_X_rom, size(order_param_X_rom, 1), gridsize(1), gridsize(2), gridsize(3));
+rom_outp.elapsed_time = reshape(elapsed_time_rom, gridsize(1), gridsize(2), gridsize(3));
 
 prom_outp.time = time_prom;
 prom_outp.x = x_prom;
-prom_outp.synchrony = permute(reshape(synchrony_prom, size(synchrony_prom, 1), n, m), [1 3 2]);
-prom_outp.sync_param = reshape(sync_param_prom, n, m)';
-prom_outp.avg_gene = permute(reshape(avg_gene_conc_prom, size(avg_gene_conc_prom, 1), n, m), [1 3 2]);
-prom_outp.spectral = reshape(spectral_ampl_fact_prom, n, m)';
-prom_outp.period = reshape(estimated_period_prom, n, m)';
-prom_outp.order_param = permute(reshape(order_param_X_prom, size(order_param_X_prom, 1), n, m), [1 3 2]);
-prom_outp.elapsed_time = reshape(elapsed_time_prom, n, m)';
+prom_outp.synchrony = reshape(synchrony_prom, size(synchrony_prom, 1), gridsize(1), gridsize(2), gridsize(3));
+prom_outp.sync_param = reshape(sync_param_prom, gridsize(1), gridsize(2), gridsize(3));
+prom_outp.avg_gene = reshape(avg_gene_conc_prom, size(avg_gene_conc_prom, 1), gridsize(1), gridsize(2), gridsize(3));
+prom_outp.spectral = reshape(spectral_ampl_fact_prom, gridsize(1), gridsize(2), gridsize(3));
+prom_outp.period = reshape(estimated_period_prom, gridsize(1), gridsize(2), gridsize(3));
+prom_outp.order_param = reshape(order_param_X_prom, size(order_param_X_prom, 1), gridsize(1), gridsize(2), gridsize(3));
+prom_outp.elapsed_time = reshape(elapsed_time_prom, gridsize(1), gridsize(2), gridsize(3));
 
 deim_outp.time = time_deim;
 deim_outp.x = x_deim;
-deim_outp.synchrony = permute(reshape(synchrony_deim, size(synchrony_deim, 1), n, m), [1 3 2]);
-deim_outp.sync_param = reshape(sync_param_deim, n, m)';
-deim_outp.avg_gene = permute(reshape(avg_gene_conc_deim, size(avg_gene_conc_deim, 1), n, m), [1 3 2]);
-deim_outp.spectral = reshape(spectral_ampl_fact_deim, n, m)';
-deim_outp.period = reshape(estimated_period_deim, n, m)';
-deim_outp.order_param = permute(reshape(order_param_X_deim, size(order_param_X_deim, 1), n, m), [1 3 2]);
-deim_outp.elapsed_time = reshape(elapsed_time_deim, n, m)';
+deim_outp.synchrony = reshape(synchrony_deim, size(synchrony_deim, 1), gridsize(1), gridsize(2), gridsize(3));
+deim_outp.sync_param = reshape(sync_param_deim, gridsize(1), gridsize(2), gridsize(3));
+deim_outp.avg_gene = reshape(avg_gene_conc_deim, size(avg_gene_conc_deim, 1), gridsize(1), gridsize(2), gridsize(3));
+deim_outp.spectral = reshape(spectral_ampl_fact_deim, gridsize(1), gridsize(2), gridsize(3));
+deim_outp.period = reshape(estimated_period_deim, gridsize(1), gridsize(2), gridsize(3));
+deim_outp.order_param = reshape(order_param_X_deim, size(order_param_X_deim, 1), gridsize(1), gridsize(2), gridsize(3));
+deim_outp.elapsed_time = reshape(elapsed_time_deim, gridsize(1), gridsize(2), gridsize(3));
 
 end
 

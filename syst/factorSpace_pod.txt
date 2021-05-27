@@ -1,0 +1,4 @@
+Factor#  LB     UB    Name  - title Line - this line should remain here
+1        20     28    Omega  % Period of the sinusoidal light external force 
+2     0.005   0.02    L_0    % Period of the sinusoidal light external force
+3       0.3    0.4    v_6    % for the transcriptional inhibitor

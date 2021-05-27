@@ -2,12 +2,13 @@ function training = train_pod(input, system, base_sample, params, tau_all)
 %UNTITLED5 Summary of this function goes here
 %   Detailed explanation goes here
 
-data=zeros(input.n_trials*input.n_samples*(system.n_steps+1),4*input.N);
-data_rhs=zeros(input.n_trials*(input.n_samples^input.dim_sample)*(system.n_steps+1),4*input.N);
+data=zeros(input.n_trials*input.n_samples*(system.n_steps+1),4*input.n_osc);
+data_rhs=zeros(input.n_trials*(input.n_samples)*(system.n_steps+1),4*input.n_osc);
 
 for j = 1 : input.n_samples
-    params.nu(6) = base_sample(j, 1);
-    params.omega = base_sample(j, 2);
+    params.omega = 2*pi/base_sample(j, 1);
+    params.L0 = base_sample(j, 2);
+    params.nu(6) = base_sample(j, 3);
 
     for i=1:input.n_trials
         [t_train,x_train]=RK3 (@(t,x) circadian_rhs(t,x,params,tau_all(:,i)),[0 system.final_time], system.x0, system.dt);

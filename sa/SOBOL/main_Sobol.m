@@ -9,17 +9,15 @@ set(0,'DefaultTextFontname', 'CMU Serif');
 set(0,'DefaultAxesFontName', 'CMU Serif');
 
 addpath('functions')
-simulFlag = 0;
+simulFlag = 1;
 
 %% Definition of the systems
 
-method = 'determ'; 
-
-addpath(genpath(['figures_', method]))
-addpath(genpath('../../syst_determ'))
+addpath(genpath('figures'))
+addpath(genpath('../../syst'))
 
 neurons = [3, 5, 10, 20, 50, 100, 200, 500, 1000];
-outputs = {'sync_param','spectral_ampl'} %,'kuramoto_order'};
+outputs = {'sync_param','spectral_ampl','kuramoto_order'};
 
 factors = read_factorSpace('');
 legend_cell = legendise(factors);
@@ -32,7 +30,7 @@ if simulFlag
         for n = 1:length(neurons)
             numN = neurons(n);
 
-                sobol(method, numN, output);
+                sobol(numN, output);
                 close all;
 
         end
@@ -75,11 +73,12 @@ tit_cell = {'FO indices', 'TO indices', 'FO ranking', 'TO ranking'};
 for o = 1:length(outputs)
     output = outputs{o};
     
-    plot_evolution_together('sobol_fo', cat(3,indices(:,:,1,o), lb(:,:,1,o), ub(:,:,1,o)), indices(:,:,3,o), neurons, legend_cell, {'FO indices', 'FO ranking'}, method, output)
-    plot_evolution_together('sobol_to', cat(3,indices(:,:,2,o), lb(:,:,2,o), ub(:,:,2,o)), indices(:,:,4,o), neurons, legend_cell, {'TO indices', 'TO ranking'}, method, output)
+%     plot_evolution_together('sobol_fo', cat(3,indices(:,:,1,o), lb(:,:,1,o), ub(:,:,1,o)), indices(:,:,3,o), neurons, legend_cell, {'FO indices', 'FO ranking'}, output)
+%     plot_evolution_together('sobol_to', cat(3,indices(:,:,2,o), lb(:,:,2,o), ub(:,:,2,o)), indices(:,:,4,o), neurons, legend_cell, {'TO indices', 'TO ranking'}, output)
     close all
 end
 
+plot_evolution_poster(cat(3,indices(:,:,1,o), lb(:,:,1,o), ub(:,:,1,o)), neurons, legend_cell, outputs{3})
 
 %% Comparison between outputs
 
@@ -89,7 +88,7 @@ rnk_fo = reshape(indices(end, :, 3, :), [length(legend_cell), length(outputs)]);
 rnk_to = reshape(indices(end, :, 4, :), [length(legend_cell), length(outputs)]);
 
 output_array = ["\verb|sync_param|", "\verb|spectral_ampl|", "\verb|kuramoto_order|"];
-plot_comparison({ind_fo, rnk_fo}, 'FO', method, output_array, factors.name);
-plot_comparison({ind_to, rnk_to}, 'TO', method, output_array, factors.name);
+plot_comparison({ind_fo, rnk_fo}, 'FO', output_array, factors.name);
+plot_comparison({ind_to, rnk_to}, 'TO', output_array, factors.name);
 
 close all

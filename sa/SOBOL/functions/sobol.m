@@ -1,4 +1,4 @@
-function [ Sobol_inp , Sobol_out ] = sobol(method, numN, output)
+function [ Sobol_inp , Sobol_out ] = sobol(numN, output)
 % ****       Sobol' Variance-based Global Sensitivity Analysis        ****
 % ****     This numerical (Monte Carlo-based) integration method      ****
 % ****            is adopted from  Saltelli et al. (2008)             ****
@@ -9,7 +9,7 @@ function [ Sobol_inp , Sobol_out ] = sobol(method, numN, output)
 %% Control Parameters and Specifications
 N = 500;                                   % 1. Size of the base sample: total number of function evaluation will be N * (numDim + 2)
 seedNum = 123456789;                       % 2. Seed for random number generator; put [] for autmatic randomization 
-funPath = ['../../syst_', method];         % 3. Folder address: that includes model file, factor space
+funPath = '../../syst';                   % 3. Folder address: that includes model file, factor space
 funFile = 'eval_circ';                     % 4. Model/function file: MATLAB m-file without .m extension
 smplMtd = 'Sobolseq';                      % 5. Sampling Method: RND, LHS, SymLHS, PLHS, SobolSeq, or Halton for generation of star centers; if blank, default is LHS
 bootstrapFlag = 1;                         % 6. Bootstrap Flag: enter 1 to bootstrap, 0 not to bootstrap
@@ -93,7 +93,7 @@ if bootstrapFlag == 1
     [ Sobol_out.bootstrap ] = bootstrap_sobol (yA, yB, yC, bootstrapSize, confdLvl, rnkFO, rnkTO, numGrp);
 end
 %% Store results
-save (['figures_', method, '/', output, '/Results_Sobol_', num2str(numN)], 'Sobol_inp', 'Sobol_out');
+save (['figures/', output, '/Results_Sobol_', num2str(numN)], 'Sobol_inp', 'Sobol_out');
 %% Plot results
 
 if plotFlag == 1
@@ -111,7 +111,7 @@ if plotFlag == 1
     end
     legendCell{end} = "$$\Omega$$";
 
-    plot_sensitivity(strcat(funPath, "/Figures/"), num2str(numN), Sobol_out.FO, Sobol_out.TO, legendCell);
+    plot_sensitivity(strcat(funPath, "/figures/"), num2str(numN), Sobol_out.FO, Sobol_out.TO, legendCell);
 end
 
 end

@@ -1,4 +1,4 @@
-function [FIG] = plot_evolution_together(name, results_1, results_2, neurons, legend_cell, tit_cell, method, output)
+function [FIG] = plot_evolution_together(name, results_1, results_2, neurons, legend_cell, tit_cell, output)
 %UNTITLED3 Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -10,9 +10,10 @@ N = length(legend_cell); colours_rnked = zeros(N, 3);
 CI_x =[neurons, fliplr(neurons)]; 
 i = 3; CI_y=[results_1(:,idx_1(i), 2)', flipud(results_1(:,idx_1(i), 3))'];
 
-colours_rnked(idx_1(1:floor(2*N/3)), :) = colour_groups('blue', length(1:floor(2*N/3)));
-colours_rnked(idx_1(ceil(2*N/3):floor(5*N/6)), :) = colour_groups('green', length(ceil(2*N/3):floor(5*N/6)));
-colours_rnked(idx_1(ceil(5*N/6):end), :) = colour_groups('orange', length(ceil(5*N/6):N));
+i1 = 5; i2 = 8;
+colours_rnked(idx_1(1:i1), :) = colour_groups('blue', length(1:i1));
+colours_rnked(idx_1(i1+1:i2), :) = colour_groups('green', length(i1+1:i2));
+colours_rnked(idx_1(i2+1:end), :) = colour_groups('orange', length(i2+1:N));
 
 idx_1 = flip(idx_1);
 
@@ -67,6 +68,6 @@ xlabel("Size of the neuronal network", 'FontSize', 40); ylabel( tit_cell{2}, 'Fo
 linkaxes([i1 i2],'x')
 
 
-saveas(FIG,strcat('figures_', method, '/', output, '/', name),'epsc')
+saveas(FIG,strcat('figures/', output, '/', name),'epsc')
 end
 

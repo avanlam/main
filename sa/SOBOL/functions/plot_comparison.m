@@ -1,4 +1,4 @@
-function FIG = plot_comparison(c_cell, name, method, outputs, legend_cell)
+function FIG = plot_comparison(c_cell, name, outputs, legend_cell)
 
 t_array = ["indices","ranking"];
 
@@ -50,7 +50,7 @@ for i = 1:2
 end
 
 sgtitle(strcat("\textbf{Sobol's ", name, " according to different model indicators}"), 'FontSize', 45);
-saveas(FIG,['figures_', method, '/comparison/sobol_',name,'_bar'],'epsc')
+saveas(FIG,['figures/comparison/sobol_',name,'_bar'],'epsc')
 
 %% Group comparison figures
 
@@ -78,7 +78,7 @@ for i = 1:2
 
 end
 sgtitle(strcat("\textbf{Sobol's ", name, " variation across the three model indicators}"), 'FontSize', 45);
-saveas(FIG,['figures_', method,'/comparison/sobol_',name,'_box'],'epsc')
+saveas(FIG,['figures/comparison/sobol_',name,'_box'],'epsc')
 
 %     b = boxplot(c_cell{i}', 'MedianStyle', 'target', 'Labels', legend_cell, 'Colors', [colours{2};colours{4}], 'Colorgroup', clr_change>0); hold on;
 %     set(b,{'linew'},{2})

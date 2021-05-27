@@ -2,6 +2,10 @@ function [FIG1, FIG2] = plot_one_simul(num_n, n_asympt, full, rom, prom)
 %UNTITLED7 Summary of this function goes here
 %   Detailed explanation goes here
     
+if numel(n_asympt) == 1
+    n_asympt = [n_asympt n_asympt n_asympt];
+end
+
 colours = colour_pairs('spring');
 
     Noscil_plot=floor(num_n/5);
@@ -65,9 +69,9 @@ colours = colour_pairs('spring');
     
     % Visualize order parameter
     nexttile;
-    plot(full.time(end-n_asympt:end),full.order_param,'color',colours{1}); hold on;
-    plot(rom.time(end-n_asympt:end),rom.order_param,'color',colours{2}); 
-    plot(prom.time(end-n_asympt:end),prom.order_param,'color',colours{3}); hold off;
+    plot(full.time(end-n_asympt(1):end),full.order_param,'color',colours{1}); hold on;
+    plot(rom.time(end-n_asympt(2):end),rom.order_param,'color',colours{2}); 
+    plot(prom.time(end-n_asympt(3):end),prom.order_param,'color',colours{3}); hold off;
     xlabel('$t$','interpreter','latex'); ylabel('$R$','interpreter','latex'); ylim([0 1]);
     title('Order parameter');
     

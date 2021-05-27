@@ -13,24 +13,21 @@ addpath('functions')
 %% Definition of the systems
 
 method = 'determ';
-addpath(genpath(['../syst_', method]))
-addpath(genpath(['figures_', method]))
+addpath(genpath('../syst'))
+addpath(genpath('figures'))
 
-output = 'kuramoto_order'; name = 'all'; color = 'green';
+output = 'kuramoto_order';
 
 factors = read_factorSpace('');
-
-legendCell = factors.name;
-for i = 1:numel(legendCell)
-    legendCell{i} = strcat('$$', legendCell{i},'$$');
-end
-legendCell{end} = "$$\Omega$$";
+legend_cell = legendise(factors);
 
 %% Reduction of the system and analysis
 
 neurons = 100; 
 
     fprintf(['\n ## ROM for ', num2str(neurons), ' neurons \n']);
-    pod_deim(method, neurons)
+    pod_deim(neurons)
+    
+    
 
 
