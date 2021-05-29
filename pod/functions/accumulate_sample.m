@@ -1,13 +1,13 @@
-function [full_outp_test, rom_outp_test, prom_outp_test] = accumulate_sample(sample, params, tau, final_time, x0, dt, n_asympt, U, V)
+function [full_outp_test, rom_outp_test, prom_outp_test] = accumulate_sample(sample, params, tau, time, U, V)
 %UNTITLED8 Summary of this function goes here
 %   Detailed explanation goes here
 
 
-[full_outp_test, rom_outp_test, prom_outp_test] = simulate_sample(sample, params, tau(:,1), final_time, x0, dt, n_asympt, U, V);
+[full_outp_test, rom_outp_test, prom_outp_test] = simulate_sample(sample, params, tau(:,1), time, U, V);
 
 for i=2:size(tau,2)
 
-    [full_outp, rom_outp, prom_outp] = simulate_sample(sample, params, tau(:,i), final_time, x0, dt, n_asympt, U, V);
+    [full_outp, rom_outp, prom_outp] = simulate_sample(sample, params, tau(:,i), time, U, V);
 
     full_outp_test.synchrony(:,i) = full_outp.synchrony;
     full_outp_test.avg_gene(:,i) = full_outp.avg_gene;

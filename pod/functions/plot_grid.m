@@ -11,16 +11,15 @@ mesh_2 = reshape(tmp2',[],1);
     
 FIG = figure();
 
-% t = tiledlayout(2,size(param,2));
-% t.TileSpacing = 'tight';
-% t.TileIndexing = 'columnmajor';
+t = tiledlayout(2,size(param,2));
+t.TileSpacing = 'tight';
 
 FIG.WindowState = 'fullscreen';
-sgtitle(['\textbf{Parametric variation on $$', name,'$$}'], 'interpreter', 'latex', 'FontSize', 40)        
+sgtitle(['\textbf{Parametric variation on $$', name,'$$}'], 'interpreter', 'latex', 'FontSize', 50)        
 titles = {'FOM', 'ROM', 'pROM', 'DEIM'};
    
     for i = 1:size(param,2)
-        ax(i) = subplot(1, size(param,2), i);
+        nexttile;
 
         inter = scatteredInterpolant(mesh_1,mesh_2,param(:, i)); 
         surf(XX,YY,inter(XX, YY)); 
@@ -31,14 +30,15 @@ titles = {'FOM', 'ROM', 'pROM', 'DEIM'};
         axis square
 
         if i==1
-            ylabel('$\Omega$','interpreter','latex', 'FontSize', 40);
+            ylabel('$L_0$','interpreter','latex', 'FontSize', 40);
         elseif i ==2
-            xlabel('$\nu_6$','interpreter','latex', 'FontSize', 40); 
+            xlabel('$\Omega$','interpreter','latex', 'FontSize', 40); 
         end
     end
     
-    cb = colorbar('Location', 'north');
-    set(cb, 'Position', [.25 .83 .5 .0281])
+%     cb = colorbar('Location', 'north');
+%     set(cb, 'Position', [.25 .83 .5 .0281])
+    cb = colorbar; cb.Layout.Tile = 'north';
     cb.TickLabelInterpreter = 'latex';
 end
 

@@ -1,7 +1,7 @@
 
 clear; close all; clc;
 
-set(0,'defaultAxesFontSize',35); set(0,'defaultLineLineWidth',2);
+set(0,'defaultAxesFontSize',35); set(0,'defaultLineLineWidth',3);
 
 set(0,'defaultAxesTickLabelInterpreter','latex');
 set(0,'defaulttextinterpreter','latex');

@@ -41,6 +41,12 @@ elseif shade == "spring"
     codes{1} = GreenAsh;
     codes{2} = Mint;
     codes{3} = Marigold;
+elseif shade == "springXL"
+    codes{1} = GreenAsh;
+    codes{2} = Mint;
+    codes{3} = Marigold;
+    codes{4} = BurntCoral;
+    codes{5} = Raspberry;
 elseif shade == "fresh"
     codes{1} = GreenAsh;
     codes{2} = Illuminating;
@@ -49,7 +55,6 @@ elseif shade == "duo"
     codes{1} = Marigold;
     codes{2} = Mint;
 elseif shade == "all"
-    
     codes{1} = BurntCoral;
     codes{2} = Marigold;
     codes{3} = Illuminating;

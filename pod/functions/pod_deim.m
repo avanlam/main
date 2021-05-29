@@ -3,8 +3,8 @@
 n_osc = 100;
 
 %% Control Parameters
-n_samples = 20;                 	% 1. Size of the base sample: total number of function evaluation will be N * (numDim + 2)
-n_test_samples = 2;                % 2. Size of the test sample: total number of function evaluation will be N * (numDim + 2)
+n_samples = 7;                 	% 1. Size of the base sample: total number of function evaluation will be N * (numDim + 2)
+n_test_samples = 10;                % 2. Size of the test sample: total number of function evaluation will be N * (numDim + 2)
 n_trials = 1;                       % 3. Number of realisations for the natural frequencies in the base sample
 n_trials_samples = 50;              % 4. Number of realisations for the natural frequencies in the test sample
 n_latent_pod=10;                    % 5. Reduced number of oscillators, up to N
@@ -12,16 +12,20 @@ n_samples_deim=10;                  % 6. Reduced number of oscillators, up to N
 seedNum = 123456789;               	% 7. Seed for random number generator; put [] for autmatic randomization 
 funPath = '../syst';                % 8. Folder address: that includes model file, factor space
 funFile = 'eval_circ';            	% 9. Model/function file: MATLAB m-file without .m extension
-smplMtd = 'LHS';                  	% 10. Sampling Method: RND, LHS, SymLHS, PLHS, SobolSeq, or Halton for generation of star centers; if blank, default is LHS
+colours = colour_pairs('spring');
 %% Plot Flags
 samplePlotFlag = 0;
 svdPlotFlag = 0;
 simulPlotFlag = 0;
 testFreqFlag = 0;
-testParamFlag = 0;
+testParamFlag = 1;
+plotOmega = 0;
+plotMore = 0;
 testFreqParamFlag = 0;
 testReducedDimFlag = 0;
 testFullDimFlag = 0;
+plotComputation = 0;
+plotOffline = 0;
 %% System Parameters
 final_time=500;             % 1. Final time
 n_steps=final_time;         % 2. Number of time steps
@@ -44,7 +48,6 @@ rom.seedNum = seedNum;
 rom.funFile = funFile;
 rom.funPath = funPath;
 rom.funFile = funFile;
-rom.smplMtd = smplMtd;
 rom.n_trials = n_trials;
 time.final_time = final_time;
 time.n_steps = n_steps;
@@ -86,6 +89,7 @@ for j = 1 : n_samples
     base_sample_prom(j, :) = base_sample_prom(j, :) .* ( ub' - lb') + lb';
 end
 chrono = toc;
+base_sample_prom(end,1) = 28;
 
 fprintf(['.. Parametric base sample generated in ', num2str(chrono),' seconds \n']);
 
@@ -95,8 +99,8 @@ x_all=linspace(lb(1),ub(1),n_test_samples);
 y_all=linspace(lb(2),ub(2),n_test_samples);
 z_all=linspace(lb(3),ub(3),n_test_samples);
 
-[xx, yy, zz] = meshgrid(x_all, y_all, z_all);
-test_sample = [ reshape(xx, [n_test_samples^3, 1]), reshape(yy, [n_test_samples^3, 1]), reshape(zz, [n_test_samples^3, 1])];
+[x, y, z] = meshgrid(x_all, y_all, z_all);
+test_sample = [ reshape(x, [n_test_samples^3, 1]), reshape(y, [n_test_samples^3, 1]), reshape(z, [n_test_samples^3, 1])];
 chrono = toc;
 
 fprintf(['.. Test sample generated in ', num2str(chrono),' seconds \n']);
@@ -105,7 +109,6 @@ if samplePlotFlag
    FIG = figure();
    FIG.WindowState = 'fullscreen'; 
 
-   colours = colour_pairs('spring');
    s(1) = scatter(test_sample(:,1),test_sample(:,2), 300, colours{1}, 'filled', 'Marker', 's'); hold on
    s(3) = scatter(base_sample_prom(:,1),base_sample_prom(:,2), 300, colours{3}, 'filled', 'Marker', 's');
    s(2) = scatter(base_sample_rom(:,1),base_sample_rom(:,2), 300, colours{2}, 'filled', 'Marker', 's'); hold off
@@ -114,21 +117,22 @@ if samplePlotFlag
    xlim([lb(1),ub(1)]); ylim([lb(2),ub(2)]); axis square
    xlabel('$\Omega$','interpreter','latex', 'FontSize', 40);
    ylabel('$L_0$','interpreter','latex', 'FontSize', 40); 
-   title('Parametric samples','interpreter','latex', 'FontSize', 45);
+   title('Parametric samples','interpreter','latex', 'FontSize', 50);
 
-   saveas(FIG, strcat('figures/samples_', num2str(n_osc)), 'epsc');
+   saveas(FIG, strcat('figures/svd/samples_', num2str(n_osc)), 'epsc');
 end
 %% Construct training set
 
 tic;
-training = train_pod(rom, time, base_sample_rom, params, tau_all); chrono1 = toc;
-data_rom = training{1}; data_rhs = training{2};
+data_rom = train_pod(rom, time, base_sample_rom, params, tau_all); chrono1 = toc;
+% data_rom = training{1}; data_rhs = training{2};
 
 tic;
-training = train_pod(prom, time, base_sample_prom, params, tau_all); chrono2 = toc;
-data_prom = training{1}; data_rhs = training{2};
+data_prom = train_pod(prom, time, base_sample_prom, params, tau_all); chrono2 = toc;
+% data_prom = training{1}; data_rhs = training{2};
 
 fprintf(['.. Training sets constructed in respectively ', num2str(chrono1), ' and ', num2str(chrono2), ' seconds \n']);
+
 
 %% Calculate the SVD on the snapshot matrix
 
@@ -136,17 +140,18 @@ fprintf(['.. Training sets constructed in respectively ', num2str(chrono1), ' an
 [V, T, V_pod, V_old] = svd_pod(data_prom, n_osc, n_latent_pod);
 
 fprintf('.. SVD done \n');
+
 %% Plot the decay of the SVD values
 
 if svdPlotFlag
     
     [FIG1, FIG2, FIG3] = plot_svd(U, S, U_old, V, T, V_old);
     FIG1.WindowState = 'fullscreen'; 
-    saveas(FIG1,strcat('figures/subangle_', num2str(n_osc)),'epsc')  
+    saveas(FIG1,strcat('figures/svd/subangle_', num2str(n_osc)),'epsc')  
     FIG2.WindowState = 'fullscreen'; 
-    saveas(FIG2,strcat('figures/svd_', num2str(n_osc)),'epsc')   
+    saveas(FIG2,strcat('figures/svd/svd_', num2str(n_osc)),'epsc')   
     FIG3.WindowState = 'fullscreen'; 
-    saveas(FIG3,strcat('figures/podvectors_', num2str(n_osc)),'epsc')   
+    saveas(FIG3,strcat('figures/svd/podvectors_', num2str(n_osc)),'epsc')   
         
 end
 
@@ -158,23 +163,29 @@ tau = tau_all(:,1);
 
 
 if simulPlotFlag
-    [ full_output, rom_output, prom_output ] = simulate_sample(base_sample_rom, params, tau, final_time, x0, time, U_pod, V_pod);
+    [ full_output, rom_output, prom_output ] = simulate_sample(base_sample_rom, params, tau, time, U_pod, V_pod);
     
     [FIG1, FIG2] = plot_one_simul(n_osc, n_asympt, full_output, rom_output, prom_output);
     
     FIG1.WindowState = 'fullscreen';
-    saveas(FIG1,strcat('figures/osc_', num2str(n_osc)),'epsc')
+    saveas(FIG1,strcat('figures/svd/osc_', num2str(n_osc)),'epsc')
+    
     FIG2.WindowState = 'fullscreen';
-    saveas(FIG2,strcat('figures/singlesim_', num2str(n_osc)),'epsc')
+    saveas(FIG2,strcat('figures/svd/singlesim_', num2str(n_osc)),'epsc')
     
     FIG3 = plot_optimal_projection(full_output, U_pod, V_pod);
     FIG3.WindowState = 'fullscreen';
-    saveas(FIG3,strcat('figures/optiproj_', num2str(n_osc)),'epsc')
+    saveas(FIG3,strcat('figures/svd/optiproj_', num2str(n_osc)),'epsc')
     
+    err_x_rom= 1/sqrt(numel(full_output.x)).*vecnorm(vecnorm(full_output.x-rom_output.x,2, 1), 2, 2);
+    err_x_prom= 1/sqrt(numel(full_output.x)).*vecnorm(vecnorm(full_output.x-prom_output.x,2, 1), 2, 2);
+
     % Display times
     fprintf('      elapsed time for full model: %f\n', full_output.elapsed_time);
     fprintf('      elapsed time for ROM model: %f\n', rom_output.elapsed_time);
     fprintf('      elapsed time for pROM model: %f\n', prom_output.elapsed_time);
+    fprintf('      error for ROM model: %f\n', err_x_rom);
+    fprintf('      error for pROM model: %f\n', err_x_prom);
     
     fprintf('.. TEST: A single simulation compared \n');
 
@@ -193,16 +204,13 @@ end
 if testFreqFlag
     rng('default'); tau_all=a+(b-a)*rand(n_osc, n_trials_samples);
     
-    [ full_outp_freq, rom_outp_freq, prom_outp_freq ] = accumulate_sample(base_sample_rom, params, tau_all, final_time, x0, dt, n_asympt, U_pod, V_pod);
-
-    fprintf('.. Test data accumulated \n');
+    [ full_outp_freq, rom_outp_freq, prom_outp_freq ] = accumulate_sample(base_sample_rom, params, tau, time, U_pod, V_pod);
 
     FIG = figure(); FIG.WindowState = 'fullscreen';
     t = tiledlayout(3,1);
     t.TileSpacing = 'tight';
-    sgtitle('\textbf{Variation over the natural frequencies of the oscillators}', 'FontSize', 40, 'interpret', 'latex')
+    sgtitle('\textbf{Variation over the natural frequencies of the oscillators}', 'FontSize', 50, 'interpret', 'latex')
     
-    colours = colour_pairs('spring');
     % Visualize confidence interval for synchrony variable
     nexttile;
     plot_confidence_interval(full_outp_freq.synchrony_mean-1.96*sqrt(full_outp_freq.synchrony_std/size(tau_all,2)),full_outp_freq.synchrony_mean+1.96*sqrt(full_outp_freq.synchrony_std/size(tau_all,2)),full_outp_freq.time,colours{1}); hold on;
@@ -231,74 +239,121 @@ if testFreqFlag
     lg = legend({'FOM','ROM','pROM'},'interpreter','latex');
     lg.Layout.Tile = 'north';
     
-    saveas(FIG,strcat('figures/testF_', num2str(n_osc)),'epsc')   
+    saveas(FIG,strcat('figures/tests/testF_', num2str(n_osc)),'epsc')   
     
     fprintf('.. TEST: Natural frequencies compared \n');
 
 end
 
-%% A single simulation for varying v_6 and omega
 
-if testParamFlag
+%% A single simulation for varying parameters
+
+if testParamFlag || plotOmega || plotMore || plotComputation
     
     tau=tau_all(:,1);
-    colours = colour_pairs('spring');
     
-    test_sample_x = test_sample; test_sample_x(:,2) = base_sample_rom(2); test_sample_x(:,3) = base_sample_rom(3); test_sample_x = unique( test_sample_x, 'rows');
+    test_sample_x = test_sample; test_sample_x(:,2) = 0.01; test_sample_x(:,3) = base_sample_rom(3); test_sample_x = unique( test_sample_x, 'rows');
     test_sample_y = test_sample; test_sample_y(:,1) = base_sample_rom(1); test_sample_y(:,3) = base_sample_rom(3); test_sample_y = unique( test_sample_y, 'rows');
     test_sample_z = test_sample; test_sample_z(:,1) = base_sample_rom(1); test_sample_z(:,2) = base_sample_rom(2); test_sample_z = unique( test_sample_z, 'rows');
+    test_samples = {test_sample_x, test_sample_y, test_sample_z};
 
-%     [  full_outp_test, rom_outp_test, prom_outp_test, deim_outp_test ] = simulate_sample_grid(test_sample, [n_test_samples n_test_samples n_test_samples], params, tau, final_time, x0, dt, n_asympt, U, U_pod, V_pod);
-% 
-%     [  full_outp_x, rom_outp_x, prom_outp_x, deim_outp_x ] = simulate_sample_grid(test_sample_x, [n_test_samples 1 1], params, tau, final_time, x0, dt, n_asympt, U, U_pod, V_pod);
-% 
-%     [  full_outp_y, rom_outp_y, prom_outp_y, deim_outp_y ] = simulate_sample_grid(test_sample_y, [1 n_test_samples 1], params, tau, final_time, x0, dt, n_asympt, U, U_pod, V_pod);    
-%     
-%     [  full_outp_z, rom_outp_z, prom_outp_z, deim_outp_z ] = simulate_sample_grid(test_sample_z, [1 1 n_test_samples], params, tau, final_time, x0, dt, n_asympt, U, U_pod, V_pod);    
-%         
+    test_sample_grid = test_sample; test_sample_grid(:,3) = base_sample_rom(3); test_sample_grid = unique( test_sample_grid, 'rows');
+
+    [  full_outp_x, rom_outp_x, prom_outp_x, deim_outp_x ] = simulate_sample_grid(test_sample_x, [n_test_samples 1 1], params, tau, time, U, U_pod, V_pod);
+    [  full_outp_y, rom_outp_y, prom_outp_y, deim_outp_y ] = simulate_sample_grid(test_sample_y, [1 n_test_samples 1], params, tau, time, U, U_pod, V_pod);    
+    [  full_outp_z, rom_outp_z, prom_outp_z, deim_outp_z ] = simulate_sample_grid(test_sample_z, [1 1 n_test_samples], params, tau, time, U, U_pod, V_pod);    
+
+    [  full_outp_grid, rom_outp_grid, prom_outp_grid, deim_outp_grid ] = simulate_sample_grid(test_sample_grid, [n_test_samples n_test_samples 1], params, tau, time, U, U_pod, V_pod);    
+
+%     [  full_outp_test, rom_outp_test, prom_outp_test, deim_outp_test ] = simulate_sample_grid(test_sample, [n_test_samples n_test_samples 1], params, tau, final_time, x0, dt, n_asympt, U, U_pod, V_pod);        
 %     filename = 'test_parameters_2.mat'; save(filename, 'full_outp_test', 'rom_outp_test', 'prom_outp_test' ...
 %         , 'full_outp_x', 'rom_outp_x', 'prom_outp_x', 'full_outp_y', 'rom_outp_y', 'prom_outp_y');
-    fprintf('.. TEST: Parameter range collected +');
 
-    % Visualize quantities
-        % Rho
-        sync_param = [full_outp_test.sync_param(:), rom_outp_test.sync_param(:), prom_outp_test.sync_param(:)];
-        FIG = plot_grid(sync_param, '\rho', x_all,y_all, [0.9 1], lb, ub);
-        saveas(FIG,strcat('figures/testP_sync_', num2str(n_osc)),'epsc')   
-
-        % Spectral amplification factor
-        spectral = [full_outp_test.spectral(:), rom_outp_test.spectral(:), prom_outp_test.spectral(:)];
-        FIG = plot_grid(spectral, 'S', x_all,y_all, [0 60], lb, ub);
-        saveas(FIG,strcat('figures/testP_spectral_', num2str(n_osc)),'epsc')   
-
-        % Estimated period
-        period = [full_outp_test.period(:), rom_outp_test.period(:), prom_outp_test.period(:)];
-        FIG = plot_grid(period, '\bar{T}', x_all,y_all, [20 28], lb, ub);
-        saveas(FIG,strcat('figures/testP_period_', num2str(n_osc)),'epsc')   
-
-        % Order parameter
-        order_param = [full_outp_test.order_param(end,:)', rom_outp_test.order_param(end,:)', prom_outp_test.order_param(end,:)'];
-        FIG = plot_grid(order_param, 'R', x_all,y_all, [0 1], lb, ub);
-        saveas(FIG,strcat('figures/testP_order_', num2str(n_osc)),'epsc')   
-
-        % Error
-        err_rom= 1/sqrt(numel(full_outp_test.x)).*reshape(vecnorm(vecnorm(full_outp_test.x-rom_outp_test.x,2, 1), 2, 2), [n_test_samples^2, 1]);
-        err_prom= 1/sqrt(numel(full_outp_test.x)).*reshape(vecnorm(vecnorm(full_outp_test.x-prom_outp_test.x,2, 1), 2, 2), [n_test_samples^2, 1]);
-        FIG = plot_grid([err_rom err_prom], 'error', x_all, y_all, [0 0.1], lb, ub);
-        saveas(FIG,strcat('figures/testP_error_', num2str(n_osc)),'epsc')   
-
-        % 2-D Error
-        xx = {full_outp_x.x, rom_outp_x.x, prom_outp_x.x};
-        yy = {full_outp_y.x, rom_outp_y.x, prom_outp_y.x};
-        zz = {full_outp_z.x, rom_outp_z.x, prom_outp_z.x};
-        FIG = plot_error(x_all, y_all, z_all, xx, yy, zz, lb, ub);
-        saveas(FIG,strcat('figures/testP_error2d_', num2str(n_osc)),'epsc')   
-    
-    fprintf(' explored \n');
+    % 2-D Error
+    xx = {full_outp_x.x, rom_outp_x.x, prom_outp_x.x};
+    yy = {full_outp_y.x, rom_outp_y.x, prom_outp_y.x};
+    zz = {full_outp_z.x, rom_outp_z.x, prom_outp_z.x};
+        
+    fprintf('.. TEST: Parameter range collected \n');
 
 end
+if testParamFlag
+    % Visualize quantities
+        % Rho
+        sync_param = [full_outp_grid.sync_param(:), rom_outp_grid.sync_param(:), prom_outp_grid.sync_param(:)];
+        FIG = plot_grid(sync_param, '\rho', x_all,y_all, [0.9 1], lb, ub);
+        exportgraphics(FIG,strcat('figures/tests/gridP_sync_', num2str(n_osc), '.eps'),'ContentType','vector','BackgroundColor','none')
 
+        % Spectral amplification factor
+        spectral = [full_outp_grid.spectral(:), rom_outp_grid.spectral(:), prom_outp_grid.spectral(:)];
+        FIG = plot_grid(spectral, 'S', x_all,y_all, [0 60], lb, ub);
+        exportgraphics(FIG,strcat('figures/tests/gridP_spectral_', num2str(n_osc), '.eps'),'ContentType','vector','BackgroundColor','none')
 
+        % Estimated period
+        period = [full_outp_grid.period(:), rom_outp_grid.period(:), prom_outp_grid.period(:)];
+        FIG = plot_grid(period, '\bar{T}', x_all,y_all, [20 28], lb, ub);
+        exportgraphics(FIG,strcat('figures/tests/gridP_period_', num2str(n_osc), '.eps'),'ContentType','vector','BackgroundColor','none')
+
+        % Order parameter
+        order_param = [full_outp_grid.order_param(end,:)', rom_outp_grid.order_param(end,:)', prom_outp_grid.order_param(end,:)'];
+        FIG = plot_grid(order_param, 'R', x_all,y_all, [0 1], lb, ub);
+        exportgraphics(FIG,strcat('figures/tests/gridP_order_', num2str(n_osc), '.eps'),'ContentType','vector','BackgroundColor','none')
+
+        % Error
+        err_rom = 1/sqrt(numel(full_outp_grid.x)).*reshape(vecnorm(vecnorm(full_outp_grid.x-rom_outp_grid.x,2, 1), 2, 2), [n_test_samples^2, 1]);
+        err_prom = 1/sqrt(numel(full_outp_grid.x)).*reshape(vecnorm(vecnorm(full_outp_grid.x-prom_outp_grid.x,2, 1), 2, 2), [n_test_samples^2, 1]);
+        FIG = plot_grid_error([err_rom err_prom], 'error', x_all, y_all, [0 max(err_rom, [], 'all')], lb, ub, base_sample_prom);
+        exportgraphics(FIG,strcat('figures/gridP_error_', num2str(n_osc), '.eps'),'ContentType','vector','BackgroundColor','none')
+
+        FIG = plot_error(x_all, y_all, z_all, xx, yy, zz, lb, ub);
+        saveas(FIG,strcat('figures/tests/testP_error_2d_', num2str(n_osc)),'epsc')   
+    
+end
+
+%% Construct pROM for Omega only
+
+if plotOmega 
+    base_sample_prom_omega(:,1) = linspace(20,28,n_samples);
+    base_sample_prom_omega(:,2) = 0.01 .* ones(n_samples,1);
+    base_sample_prom_omega(:,3) = base_sample_rom(3) .* ones(n_samples,1);
+
+    [xx_omega, yy_omega, zz_omega] = build_and_test(base_sample_prom_omega, prom, time, tau_all, n_osc, n_latent_pod, test_samples, params, tau, U, U_pod);
+    
+    % 2-D Error
+    FIG = plot_errors("$pROM_{\Omega}$", x_all, y_all, z_all, xx, yy, zz, xx_omega, yy_omega, zz_omega, lb, ub);
+    saveas(FIG,strcat('figures/testP_error2d_omega_', num2str(n_osc)),'epsc')   
+
+    fprintf('.. TEST : pROM for Omega \n');
+end
+
+%% Construct pROM for more samples
+
+if plotMore
+    prom_1 = prom;
+    prom_1.n_samples = 2;
+    
+    base_sample_prom_1 = p(1:prom_1.n_samples,:);
+    for j = 1 : prom_1.n_samples
+        base_sample_prom_1(j, :) = base_sample_prom_1(j, :) .* ( ub' - lb') + lb';
+    end
+
+    prom_2 = prom;
+    prom_2.n_samples = 18;
+    
+    base_sample_prom_2 = p(1:prom_2.n_samples,:);
+    for j = 1 : prom_2.n_samples
+        base_sample_prom_2(j, :) = base_sample_prom_2(j, :) .* ( ub' - lb') + lb';
+    end
+
+    [xx_1, yy_1, zz_1] = build_and_test(base_sample_prom_1, prom_1, time, tau_all, n_osc, n_latent_pod, test_samples, params, tau, U, U_pod);
+    [xx_2, yy_2, zz_2] = build_and_test(base_sample_prom_2, prom_2, time, tau_all, n_osc, n_latent_pod, test_samples, params, tau, U, U_pod);
+
+        % 2-D Error
+        FIG = plot_errorss(x_all, y_all, z_all, xx, yy, zz, xx_1, yy_1, zz_1, xx_2, yy_2, zz_2, lb, ub);
+        saveas(FIG,strcat('figures/testP_error2d_more_', num2str(n_osc)),'epsc')   
+
+    fprintf('.. TEST : pROM for more samples \n');
+end
 %% simulate for all instances of the random frequency AND varying coupling 
 
 % %deim with snapshots
@@ -349,7 +404,6 @@ latent_dim=unique(round(logspace(0,log10(n_osc),20)));
  tau=tau_all(:,1);
 
 if testReducedDimFlag
-    colours = colour_pairs('spring');
 
     for k=1:length(latent_dim)
         disp(k);
@@ -364,7 +418,7 @@ if testReducedDimFlag
         meanU_v=mean(U{4},1);
         PTtau=tau(Pdeim);
 
-        [full_output, rom_output, prom_output] = simulate_sample(base_sample_rom, params, tau, final_time, x0, time, U_pod, V_pod);
+        [full_output, rom_output, prom_output] = simulate_sample(base_sample_rom, params, tau, time, U_pod, V_pod);
 
         full_output_k.synchrony(:,k) = full_output.synchrony;
         full_output_k.avg_gene(:,k) = full_output.avg_gene;
@@ -442,7 +496,7 @@ if testReducedDimFlag
         loglog(latent_dim,full_output_k.elapsed_time,'color',colours{1}, 'Marker', 'x'); hold on;
         loglog(latent_dim,rom_output_k.elapsed_time,'color',colours{2}, 'Marker', 'x'); 
         loglog(latent_dim,prom_output_k.elapsed_time,'color',colours{3}, 'Marker', 'x'); 
-        xlabel('$k/4$','interpreter','latex'); xticks(1:10:100); 
+        xlabel('$k/4$','interpreter','latex'); %xticks(1:10:100); 
         ylabel('$Cost$','interpreter','latex');
         title('Cost','interpreter','latex')
 
@@ -456,7 +510,7 @@ if testReducedDimFlag
         xlabel('Cost','interpreter','latex'); ylabel('$Err$','interpreter','latex');
         title('Error for each cost','interpreter','latex')
 
-    title(t, 'Cost while varying reduced dimension', 'interpreter','latex', 'FontSize', 40)
+    title(t, '\textbf{Cost while varying reduced dimension}', 'interpreter','latex', 'FontSize', 40)
     FIG.WindowState = 'fullscreen';
     saveas(FIG,strcat('figures/testK_cost_', num2str(n_osc)),'epsc')  
     
@@ -466,7 +520,6 @@ end
 %% behavior varying dimension of the full problem
 
 if testFullDimFlag
-    colours = colour_pairs('spring');
 
     full_dim=[20; 50; 100; 200];
     reduced_dim=10*ones(size(full_dim));
@@ -476,19 +529,17 @@ if testFullDimFlag
     for n=1:length(full_dim)
         disp(n);
 
-        rom_n.N = full_dim(n); 
-        prom_n.N = full_dim(n); 
+        rom_n.n_osc = full_dim(n); 
+        prom_n.n_osc = full_dim(n); 
 
         %construct training set and svd
         x0=repmat([0.0998 0.2468 2.0151 0.0339].',full_dim(n),1); time.x0 = x0;
         tau_all=a+(b-a)*rand(full_dim(n),n_trials); 
         %tau_all=sort(tau_all,1);
 
-        training = train_pod(rom_n, time, base_sample_rom, params, tau_all);
-        data_rom = training{1}; data_rhs = training{2};    
+        data_rom = train_pod(rom_n, time, base_sample_rom, params, tau_all);
 
-        training = train_pod(prom_n, time, base_sample_prom, params, tau_all);
-        data_prom = training{1}; data_rhs = training{2};
+        data_prom = train_pod(prom_n, time, base_sample_prom, params, tau_all);
 
         [U, S, U_pod] = svd_pod(data_rom, full_dim(n), n_latent_pod);
         [V, T, V_pod] = svd_pod(data_prom, full_dim(n), n_latent_pod);
@@ -505,7 +556,7 @@ if testFullDimFlag
     %     meanU_v=mean(U{4},1);
     %     PTtau=tau(Pdeim);
 
-        [full_output, rom_output, prom_output] = simulate_sample(base_sample_rom, params, tau, final_time, x0, time, U_pod, V_pod);
+        [full_output, rom_output, prom_output] = simulate_sample(base_sample_rom, params, tau, time, U_pod, V_pod);
 
         full_output_n.synchrony(:,n) = full_output.synchrony;
         full_output_n.avg_gene(:,n) = full_output.avg_gene;
@@ -596,50 +647,115 @@ if testFullDimFlag
 end
 
 %% balance out computational cost
-n_steps = 100;
 
-time_rom = time;
-time_rom.n_steps = n_steps;
-time_rom.dt = final_time/time_rom.n_steps;
-time_rom.n_asympt = time_rom.n_steps/5;
+if plotComputation
 
-prom.n_samples = 5;
-time_prom = time;
-time_prom.n_steps = n_steps/prom.n_samples;
-time_prom.dt = final_time/time_prom.n_steps;
-time_prom.n_asympt = time_prom.n_steps/5;
+    n_steps = 200;
 
-p = sobolset(dim_sample); 
-base_sample_prom = p(1:n_samples,:);
-for j = 1 : n_samples
-    base_sample_prom(j, :) = base_sample_prom(j, :) .* ( ub' - lb') + lb';
+    time_rom = time;
+    time_rom.n_steps = n_steps;
+    time_rom.dt = final_time/time_rom.n_steps;
+    time_rom.n_asympt = time_rom.n_steps/5;
+
+    prom.n_samples = 2;
+    time_prom = time;
+    time_prom.n_steps = n_steps/prom.n_samples;
+    time_prom.dt = final_time/time_prom.n_steps;
+    time_prom.n_asympt = time_prom.n_steps/5;
+
+    p = sobolset(dim_sample); 
+    base_sample_prom = p(1:n_samples,:);
+    for j = 1 : n_samples
+        base_sample_prom(j, :) = base_sample_prom(j, :) .* ( ub' - lb') + lb';
+    end
+
+    training = train_pod(rom, time_rom, base_sample_rom, params, tau_all);
+    training = train_pod(prom, time_prom, base_sample_prom, params, tau_all); 
+
+    [U, S, U_pod, U_old] = svd_pod(data_rom, n_osc, n_latent_pod);
+    [V, T, V_pod, V_old] = svd_pod(data_prom, n_osc, n_latent_pod);
+
+    [ full_rom, rom_output, ~ ] = simulate_sample(base_sample_rom, params, tau, time_rom, U_pod, V_pod);
+    [ full_prom, ~, prom_output ] = simulate_sample(base_sample_rom, params, tau, time_prom, U_pod, V_pod);
+
+    [FIG1, FIG2] = plot_one_simul(n_osc, [time_rom.n_asympt time_rom.n_asympt time_prom.n_asympt], full_rom, rom_output, prom_output);
+
+        % Display times
+        fprintf('      elapsed time for full model: %f\n', full_rom.elapsed_time);
+        fprintf('      elapsed time for ROM model: %f\n', rom_output.elapsed_time);
+        fprintf('      elapsed time for pROM model: %f\n', prom_output.elapsed_time);
+
+        FIG1.WindowState = 'fullscreen';
+        saveas(FIG1,strcat('figures/osc_comp_', num2str(n_osc)),'epsc')
+
+    [xx_long, yy_long, zz_long] = build_and_test(base_sample_rom, rom, time_rom, tau_all, n_osc, n_latent_pod, test_samples, params, tau, U, U_pod);
+    fprintf('check')
+    [xx_short, yy_short, zz_short] = build_and_test(base_sample_prom, prom, time_prom, tau_all, n_osc, n_latent_pod, test_samples, params, tau, U, U_pod);
+    
+    % 2-D Error
+    FIG = plot_errors('$$pROM_{\mathrm{equiv}}$$', x_all, y_all, z_all, xx_long, yy_long, zz_long, xx_short, yy_short, zz_short, lb, ub);
+    saveas(FIG,strcat('figures/tests/testP_error2d_more', num2str(n_osc)),'epsc')   
+
+    fprintf('.. TEST: Computational cost made equal \n');
 end
+%% study off-line on-line computational cost
 
-training = train_pod(rom, time_rom, base_sample_rom, params, tau_all); data_rom = training{1};
-training = train_pod(prom, time_prom, base_sample_prom, params, tau_all); data_prom = training{1};
-
-[U, S, U_pod, U_old] = svd_pod(data_rom, n_osc, n_latent_pod);
-[V, T, V_pod, V_old] = svd_pod(data_prom, n_osc, n_latent_pod);
-
-[ full_rom, rom_output, ~ ] = simulate_sample(base_sample_rom, params, tau, final_time, x0, time_rom, U_pod, V_pod);
-[ full_prom, ~, prom_output ] = simulate_sample(base_sample_rom, params, tau, final_time, x0, time_prom, U_pod, V_pod);
-
-[FIG1, FIG2] = plot_one_simul(n_osc, [time_rom.n_asympt time_rom.n_asympt time_prom.n_asympt], full_rom, rom_output, prom_output);
+if plotOffline
     
-    % Display times
-    fprintf('      elapsed time for full model: %f\n', full_output.elapsed_time);
-    fprintf('      elapsed time for ROM model: %f\n', rom_output.elapsed_time);
-    fprintf('      elapsed time for pROM model: %f\n', prom_output.elapsed_time);
-
-    FIG1.WindowState = 'fullscreen';
-    saveas(FIG1,strcat('figures/osc_', num2str(n_osc)),'epsc')
-    FIG2.WindowState = 'fullscreen';
-    saveas(FIG2,strcat('figures/singlesim_', num2str(n_osc)),'epsc')
+    offline_rom = zeros(11,1); offline_prom = zeros(11,1);
+    online_rom = zeros(11,1); online_prom = zeros(11,1);
     
-    FIG3 = plot_optimal_projection(full_output, U_pod, V_pod);
-    FIG3.WindowState = 'fullscreen';
-    saveas(FIG3,strcat('figures/optiproj_', num2str(n_osc)),'epsc')
-    
-fprintf('.. TEST: Computational cost made equal \n');
+    samples = [1 2:2:20];
+    for s = 1:11
+        prom.n_samples = samples(s);
+        
+        tic; 
+        data_rom = train_pod(rom, time, base_sample_rom, params, tau_all); 
+        [~, ~, U_pod, ~] = svd_pod(data_rom, n_osc, n_latent_pod);
+        offline_rom(s) = toc;
 
+        tic; 
+        base_sample_prom = p(1:prom.n_samples,:);
+        for j = 1 : prom.n_samples
+            base_sample_prom(j, :) = base_sample_prom(j, :) .* ( ub' - lb') + lb';
+        end
+        data_prom = train_pod(prom, time, base_sample_prom, params, tau_all); 
+        [~, ~, V_pod, ~] = svd_pod(data_prom, n_osc, n_latent_pod);
+        offline_prom(s) = toc;
+
+        tic; [ ~, ~, ~ ] = simulate_sample(base_sample_rom, params, tau, time, U_pod, V_pod); online_rom(s) = toc;
+        tic; [ ~, ~, ~ ] = simulate_sample(base_sample_rom, params, tau, time, U_pod, V_pod); online_prom(s) = toc;
+
+    end
+
+    FIG = figure();
+    t = tiledlayout(1,2);
+    t.TileSpacing = 'tight';    
+
+        nexttile;
+        plot(samples, offline_rom, 'Color', colours{2}, 'Marker', 'x', 'MarkerSize', 18); hold on;
+        plot(samples, offline_prom, 'Color', colours{3}, 'Marker', 'x', 'MarkerSize', 18);
+        xlabel('\# parametric samples', 'interpret', 'latex', 'FontSize', 30);
+        ylabel('time (seconds)', 'interpreter', 'latex', 'FontSize', 30);
+        title('Off-line cost', 'interpreter', 'latex', 'FontSize', 40);
+        
+        nexttile;
+        ax1 = plot(samples, online_rom, 'Color', colours{2}, 'Marker', 'x', 'MarkerSize', 18); hold on;
+        ax2 = plot(samples, online_prom, 'Color', colours{3}, 'Marker', 'x', 'MarkerSize', 18);
+        xlabel('\# parametric samples', 'interpret', 'latex', 'FontSize', 30);
+        ylabel('time (seconds)', 'interpreter', 'latex', 'FontSize', 30);
+        title('On-line cost', 'interpreter', 'latex', 'FontSize', 40);
+        ylim([0,2.5]);
+    
+        lg = legend([ax1, ax2], ["$ROM$","$pROM$"], 'interpreter', 'latex');
+        lg.Layout.Tile = 'north';
+
+        sgtitle('Computational cost for ROM vs. pROM', 'interpreter', 'latex', 'FontSize', 50)
+    
+    FIG.WindowState = 'fullscreen';
+    saveas(FIG,strcat('figures/offline_', num2str(n_osc)),'epsc')
+
+    fprintf('.. TEST: Computational cost documented \n');
+
+end
 % end

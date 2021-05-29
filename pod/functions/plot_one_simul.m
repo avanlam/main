@@ -13,7 +13,7 @@ colours = colour_pairs('spring');
     FIG1 = figure();
     t = tiledlayout(4,3);
     t.TileSpacing = 'tight';
-    sgtitle('\textbf{Oscillators in each model}', 'FontSize', 40, 'interpreter', 'latex');
+    sgtitle('\textbf{Oscillators in each model}', 'FontSize', 50, 'interpreter', 'latex');
     
     nexttile(1);
     ax1 = plot(full.time,full.x(:,1:4*Noscil_plot:end-3),'color',colours{1}); ylabel({'$(X_i)_{FOM}$'},'interpreter','latex'); xlim([0 500]); set(gca,'xtick',[]) 

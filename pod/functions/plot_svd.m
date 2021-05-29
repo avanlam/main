@@ -14,11 +14,11 @@ N = size(U{1}, 1);
     FIG1 = figure();   
     colours = colour_pairs('green');
     
-    plot(1:N, theta, 'Marker', 'x','MarkerSize', 12, 'LineWidth', 3, 'Color', colours{2})
+    plot(1:N, theta, 'Marker', 'x','MarkerSize', 18, 'LineWidth', 5, 'Color', colours{2})
     ylim([0 pi/2]); yticks(0:pi/6:pi/2); yticklabels(["$$0$$","$$\pi/6$$","$$\pi/3$$","$$\pi/2$$"]);
     xlabel('$r/4$','interpreter','latex', 'FontSize', 40); 
     ylabel('$\theta \; (\mathrm{rad})$','interpreter','latex', 'FontSize', 40);
-    title('\textbf{Angle between the ROM and pROM subspaces}', 'FontSize', 40, 'interpreter', 'latex');
+    title('\textbf{Angle between the ROM and pROM subspaces}', 'FontSize', 50, 'interpreter', 'latex');
 
     
 %     r = 1;
@@ -52,8 +52,8 @@ N = size(U{1}, 1);
     titles = ["$X(t)$","$Y(t)$","$Z(t)$","$V(t)$"];
     for i = 1:4
         nexttile;
-        semilogy(1:length(S{i}),S{i}/S{1}(1),'color',colours{2}, 'LineWidth', 3); hold on;
-        semilogy(1:length(T{i}),T{i}/T{1}(1),'color',colours{1}, 'LineWidth', 3); hold off;
+        semilogy(1:length(S{i}),S{i}/S{1}(1),'color',colours{2}); hold on;
+        semilogy(1:length(T{i}),T{i}/T{1}(1),'color',colours{1}); hold off;
         title(titles(i));
         if i == 2 || i==4
             set(gca,'ytick',[])
@@ -69,7 +69,7 @@ N = size(U{1}, 1);
     lg.Layout.Tile = 'north';
     xlabel(t, '$i$','interpreter','latex', 'FontSize', 30); 
     ylabel(t, '$\sigma_i/\sigma_1$','interpreter','latex', 'FontSize', 30);
-    sgtitle('\textbf{Decay of the SVD}', 'FontSize', 40, 'interpreter', 'latex');
+    sgtitle('\textbf{Decay of the SVD}', 'FontSize', 50, 'interpreter', 'latex');
 
 %% Comparison of the five first columns (most important vectors)
     
@@ -99,7 +99,7 @@ N = size(U{1}, 1);
     lg = legend(["$ROM$","$pROM$"], 'interpreter', 'latex');
     lg.Layout.Tile = 'north';
     xlabel(t, '$i$','interpreter','latex', 'FontSize', 30); 
-    sgtitle('\textbf{Comparison of the first POD modes}', 'FontSize', 40, 'interpreter', 'latex');
+    sgtitle('\textbf{Comparison of the first POD modes}', 'FontSize', 50, 'interpreter', 'latex');
     
 end
 
