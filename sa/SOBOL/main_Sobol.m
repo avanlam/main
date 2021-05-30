@@ -9,7 +9,6 @@ set(0,'DefaultTextFontname', 'CMU Serif');
 set(0,'DefaultAxesFontName', 'CMU Serif');
 
 addpath('functions')
-simulFlag = 1;
 
 %% Definition of the systems
 
@@ -18,6 +17,7 @@ addpath(genpath('../../syst'))
 
 neurons = [3, 5, 10, 20, 50, 100, 200, 500, 1000];
 outputs = {'sync_param','spectral_ampl','kuramoto_order'};
+simulFlag = 0;
 
 factors = read_factorSpace('');
 legend_cell = legendise(factors);
@@ -49,7 +49,7 @@ for o = 1:length(outputs)
     for n = 1:length(neurons)
         numN = neurons(n);
 
-        load([output,'/Results_Sobol_', num2str(numN)]);
+        load([output,'/SobolSeq16/Results_Sobol_', num2str(numN)]);
         results_all.(['r_', num2str(numN)]) = Sobol_out;
    
         indices(n, :, 1, o) = results_all.(['r_', num2str(numN)]).FO;
@@ -73,12 +73,12 @@ tit_cell = {'FO indices', 'TO indices', 'FO ranking', 'TO ranking'};
 for o = 1:length(outputs)
     output = outputs{o};
     
-%     plot_evolution_together('sobol_fo', cat(3,indices(:,:,1,o), lb(:,:,1,o), ub(:,:,1,o)), indices(:,:,3,o), neurons, legend_cell, {'FO indices', 'FO ranking'}, output)
-%     plot_evolution_together('sobol_to', cat(3,indices(:,:,2,o), lb(:,:,2,o), ub(:,:,2,o)), indices(:,:,4,o), neurons, legend_cell, {'TO indices', 'TO ranking'}, output)
+    plot_evolution_together('sobol_fo', cat(3,indices(:,:,1,o), lb(:,:,1,o), ub(:,:,1,o)), indices(:,:,3,o), neurons, legend_cell, {'FO indices', 'FO ranking'}, output)
+    plot_evolution_together('sobol_to', cat(3,indices(:,:,2,o), lb(:,:,2,o), ub(:,:,2,o)), indices(:,:,4,o), neurons, legend_cell, {'TO indices', 'TO ranking'}, output)
     close all
 end
 
-plot_evolution_poster(cat(3,indices(:,:,1,o), lb(:,:,1,o), ub(:,:,1,o)), neurons, legend_cell, outputs{3})
+% plot_evolution_poster(cat(3,indices(:,:,1,o), lb(:,:,1,o), ub(:,:,1,o)), neurons, legend_cell, outputs{3})
 
 %% Comparison between outputs
 

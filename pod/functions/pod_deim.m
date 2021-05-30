@@ -16,9 +16,9 @@ colours = colour_pairs('spring');
 %% Plot Flags
 samplePlotFlag = 0;
 svdPlotFlag = 0;
-simulPlotFlag = 0;
+simulPlotFlag = 1;
 testFreqFlag = 0;
-testParamFlag = 1;
+testParamFlag = 0;
 plotOmega = 0;
 plotMore = 0;
 testFreqParamFlag = 0;
@@ -306,7 +306,7 @@ if testParamFlag
         exportgraphics(FIG,strcat('figures/gridP_error_', num2str(n_osc), '.eps'),'ContentType','vector','BackgroundColor','none')
 
         FIG = plot_error(x_all, y_all, z_all, xx, yy, zz, lb, ub);
-        saveas(FIG,strcat('figures/tests/testP_error_2d_', num2str(n_osc)),'epsc')   
+        saveas(FIG,strcat('figures/tests/gridP_error_1d_', num2str(n_osc)),'epsc')   
     
 end
 
@@ -321,7 +321,7 @@ if plotOmega
     
     % 2-D Error
     FIG = plot_errors("$pROM_{\Omega}$", x_all, y_all, z_all, xx, yy, zz, xx_omega, yy_omega, zz_omega, lb, ub);
-    saveas(FIG,strcat('figures/testP_error2d_omega_', num2str(n_osc)),'epsc')   
+    saveas(FIG,strcat('figures/testP_error_1d_omega_', num2str(n_osc)),'epsc')   
 
     fprintf('.. TEST : pROM for Omega \n');
 end
@@ -350,7 +350,7 @@ if plotMore
 
         % 2-D Error
         FIG = plot_errorss(x_all, y_all, z_all, xx, yy, zz, xx_1, yy_1, zz_1, xx_2, yy_2, zz_2, lb, ub);
-        saveas(FIG,strcat('figures/testP_error2d_more_', num2str(n_osc)),'epsc')   
+        saveas(FIG,strcat('figures/testP_error_1d_more_', num2str(n_osc)),'epsc')   
 
     fprintf('.. TEST : pROM for more samples \n');
 end
