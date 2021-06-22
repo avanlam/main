@@ -9,12 +9,12 @@ t = c_cell{1}; [~, idx] = sort(t(:,3), 'descend');
 clr_change = zeros(size(legend_cell));
 
 legend_cell{end} = strcat('\', legend_cell{end});
-for i = 1:5
+for i = 1:6
     variab = legend_cell{idx(i)};
     legend_cell{idx(i)} = strcat('$$\underline{', variab, '}$$');
     clr_change(idx(i))=1;
 end
-for i = 6:18
+for i = 7:18
     variab = legend_cell{idx(i)};
     legend_cell{idx(i)} = strcat('$$', variab, '$$');
 end
@@ -49,7 +49,7 @@ for i = 1:2
     end
 end
 
-sgtitle(strcat("\textbf{Sobol's ", name, " according to different model indicators}"), 'FontSize', 45);
+sgtitle(strcat("\textbf{Sobol ", name, " according to different model indicators}"), 'FontSize', 45);
 saveas(FIG,['figures/comparison/sobol_',name,'_bar'],'epsc')
 
 %% Group comparison figures

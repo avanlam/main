@@ -1,4 +1,4 @@
-function [FIG] = plot_evolution_together(name, results_1, results_2, neurons, legend_cell, tit_cell, output)
+function [FIG] = plot_evolution_together(name, results_1, results_2, neurons, legend_cell, tit_cell, output, output_name)
 %UNTITLED3 Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -38,7 +38,7 @@ FIG.WindowState = 'fullscreen';
 t = tiledlayout(2,1);
 t.TileSpacing = 'tight';
 
-title(t, ['\textbf{Sobol ', fo,' } according to the indicator \verb|', output, '|'], 'FontSize', 50, 'interpreter', 'latex');
+title(t, ['\textbf{Sobol ', fo,' } according to \verb|', output, '| (', output_name, ')'], 'FontSize', 50, 'interpreter', 'latex');
 
 i1 = nexttile;
 for i = 1:N

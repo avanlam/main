@@ -9,12 +9,10 @@ set(0,'DefaultTextFontname', 'CMU Serif');
 set(0,'DefaultAxesFontName', 'CMU Serif');
 
 addpath('functions')
-
-%% Definition of the systems
-
-method = 'determ';
 addpath(genpath('../syst'))
 addpath(genpath('figures'))
+
+%% Definition of the systems
 
 output = 'kuramoto_order';
 
@@ -29,5 +27,9 @@ neurons = 100;
     pod_deim(neurons)
     
     
+%% Control problem
 
+neurons = 100; 
 
+    fprintf(['\n ## ROM for ', num2str(neurons), ' neurons \n']);
+    pod_deim(neurons)

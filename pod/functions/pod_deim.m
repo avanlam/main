@@ -14,18 +14,19 @@ funPath = '../syst';                % 8. Folder address: that includes model fil
 funFile = 'eval_circ';            	% 9. Model/function file: MATLAB m-file without .m extension
 colours = colour_pairs('spring');
 %% Plot Flags
-samplePlotFlag = 0;
-svdPlotFlag = 0;
-simulPlotFlag = 1;
+sampleFlag = 0;
+svdFlag = 0;
+simulFlag = 0;
 testFreqFlag = 0;
-testParamFlag = 0;
-plotOmega = 0;
-plotMore = 0;
+testParamFlag = 1;
+omegaFlag = 0;
+moreFlag = 0;
 testFreqParamFlag = 0;
 testReducedDimFlag = 0;
 testFullDimFlag = 0;
-plotComputation = 0;
-plotOffline = 0;
+computationFlag = 0;
+offlineFlag = 0;
+presentationFlag = 1;
 %% System Parameters
 final_time=500;             % 1. Final time
 n_steps=final_time;         % 2. Number of time steps
@@ -105,7 +106,7 @@ chrono = toc;
 
 fprintf(['.. Test sample generated in ', num2str(chrono),' seconds \n']);
 
-if samplePlotFlag
+if sampleFlag
    FIG = figure();
    FIG.WindowState = 'fullscreen'; 
 
@@ -143,11 +144,11 @@ fprintf('.. SVD done \n');
 
 %% Plot the decay of the SVD values
 
-if svdPlotFlag
+if svdFlag
     
     [FIG1, FIG2, FIG3] = plot_svd(U, S, U_old, V, T, V_old);
-    FIG1.WindowState = 'fullscreen'; 
-    saveas(FIG1,strcat('figures/svd/subangle_', num2str(n_osc)),'epsc')  
+%     FIG1.WindowState = 'fullscreen'; 
+%     saveas(FIG1,strcat('figures/svd/subangle_', num2str(n_osc)),'epsc')  
     FIG2.WindowState = 'fullscreen'; 
     saveas(FIG2,strcat('figures/svd/svd_', num2str(n_osc)),'epsc')   
     FIG3.WindowState = 'fullscreen'; 
@@ -161,9 +162,13 @@ end
 %% A single simulation = one random realisation of the model (to exemplify the POD)
 tau = tau_all(:,1);
 
+if simulFlag || presentationFlag
 
-if simulPlotFlag
     [ full_output, rom_output, prom_output ] = simulate_sample(base_sample_rom, params, tau, time, U_pod, V_pod);
+
+end
+
+if simulFlag
     
     [FIG1, FIG2] = plot_one_simul(n_osc, n_asympt, full_output, rom_output, prom_output);
     
@@ -248,7 +253,7 @@ end
 
 %% A single simulation for varying parameters
 
-if testParamFlag || plotOmega || plotMore || plotComputation
+if testParamFlag || omegaFlag || moreFlag || computationFlag || presentationFlag
     
     tau=tau_all(:,1);
     
@@ -259,6 +264,8 @@ if testParamFlag || plotOmega || plotMore || plotComputation
 
     test_sample_grid = test_sample; test_sample_grid(:,3) = base_sample_rom(3); test_sample_grid = unique( test_sample_grid, 'rows');
 
+    test_sample_grid = reshape(permute(reshape(test_sample_grid, [10 10 3]), [2 1 3]), [100 3]);
+    
     [  full_outp_x, rom_outp_x, prom_outp_x, deim_outp_x ] = simulate_sample_grid(test_sample_x, [n_test_samples 1 1], params, tau, time, U, U_pod, V_pod);
     [  full_outp_y, rom_outp_y, prom_outp_y, deim_outp_y ] = simulate_sample_grid(test_sample_y, [1 n_test_samples 1], params, tau, time, U, U_pod, V_pod);    
     [  full_outp_z, rom_outp_z, prom_outp_z, deim_outp_z ] = simulate_sample_grid(test_sample_z, [1 1 n_test_samples], params, tau, time, U, U_pod, V_pod);    
@@ -275,44 +282,54 @@ if testParamFlag || plotOmega || plotMore || plotComputation
     zz = {full_outp_z.x, rom_outp_z.x, prom_outp_z.x};
         
     fprintf('.. TEST: Parameter range collected \n');
-
+    
+    err_rom = 1/sqrt(numel(full_outp_grid.x)).*reshape(vecnorm(vecnorm(full_outp_grid.x-rom_outp_grid.x,2, 1), 2, 2), [n_test_samples^2, 1]);
+    err_prom = 1/sqrt(numel(full_outp_grid.x)).*reshape(vecnorm(vecnorm(full_outp_grid.x-prom_outp_grid.x,2, 1), 2, 2), [n_test_samples^2, 1]);
+        
 end
+%% 
+
 if testParamFlag
     % Visualize quantities
         % Rho
-        sync_param = [full_outp_grid.sync_param(:), rom_outp_grid.sync_param(:), prom_outp_grid.sync_param(:)];
+        sync_param = [full_outp_grid.sync_param(:), rom_outp_grid.sync_param(:), prom_outp_grid.sync_param(:), deim_outp_grid.sync_param(:)];
         FIG = plot_grid(sync_param, '\rho', x_all,y_all, [0.9 1], lb, ub);
         exportgraphics(FIG,strcat('figures/tests/gridP_sync_', num2str(n_osc), '.eps'),'ContentType','vector','BackgroundColor','none')
 
         % Spectral amplification factor
-        spectral = [full_outp_grid.spectral(:), rom_outp_grid.spectral(:), prom_outp_grid.spectral(:)];
+        spectral = [full_outp_grid.spectral(:), rom_outp_grid.spectral(:), prom_outp_grid.spectral(:), deim_outp_grid.spectral(:)];
         FIG = plot_grid(spectral, 'S', x_all,y_all, [0 60], lb, ub);
         exportgraphics(FIG,strcat('figures/tests/gridP_spectral_', num2str(n_osc), '.eps'),'ContentType','vector','BackgroundColor','none')
 
         % Estimated period
-        period = [full_outp_grid.period(:), rom_outp_grid.period(:), prom_outp_grid.period(:)];
+        period = [full_outp_grid.period(:), rom_outp_grid.period(:), prom_outp_grid.period(:), deim_outp_grid.period(:)];
         FIG = plot_grid(period, '\bar{T}', x_all,y_all, [20 28], lb, ub);
         exportgraphics(FIG,strcat('figures/tests/gridP_period_', num2str(n_osc), '.eps'),'ContentType','vector','BackgroundColor','none')
 
         % Order parameter
-        order_param = [full_outp_grid.order_param(end,:)', rom_outp_grid.order_param(end,:)', prom_outp_grid.order_param(end,:)'];
-        FIG = plot_grid(order_param, 'R', x_all,y_all, [0 1], lb, ub);
+        order_param = [full_outp_grid.order_param(end,:)', rom_outp_grid.order_param(end,:)', prom_outp_grid.order_param(end,:)', deim_outp_grid.order_param(end,:)'];
+        FIG = plot_grid(order_param, '\gamma', x_all,y_all, [0 1], lb, ub);
         exportgraphics(FIG,strcat('figures/tests/gridP_order_', num2str(n_osc), '.eps'),'ContentType','vector','BackgroundColor','none')
 
+        % Cost
+        cost = [full_outp_grid.elapsed_time(:), rom_outp_grid.elapsed_time(:), prom_outp_grid.elapsed_time(:), deim_outp_grid.elapsed_time(:)];
+        FIG = plot_grid(cost, 'cost', x_all,y_all, [0 0.2], lb, ub);
+        exportgraphics(FIG,strcat('figures/tests/gridP_cost_', num2str(n_osc), '.eps'),'ContentType','vector','BackgroundColor','none')
+
         % Error
-        err_rom = 1/sqrt(numel(full_outp_grid.x)).*reshape(vecnorm(vecnorm(full_outp_grid.x-rom_outp_grid.x,2, 1), 2, 2), [n_test_samples^2, 1]);
-        err_prom = 1/sqrt(numel(full_outp_grid.x)).*reshape(vecnorm(vecnorm(full_outp_grid.x-prom_outp_grid.x,2, 1), 2, 2), [n_test_samples^2, 1]);
         FIG = plot_grid_error([err_rom err_prom], 'error', x_all, y_all, [0 max(err_rom, [], 'all')], lb, ub, base_sample_prom);
-        exportgraphics(FIG,strcat('figures/gridP_error_', num2str(n_osc), '.eps'),'ContentType','vector','BackgroundColor','none')
+        exportgraphics(FIG,strcat('figures/tests/gridP_error_', num2str(n_osc), '.eps'),'ContentType','vector','BackgroundColor','none')
 
         FIG = plot_error(x_all, y_all, z_all, xx, yy, zz, lb, ub);
         saveas(FIG,strcat('figures/tests/gridP_error_1d_', num2str(n_osc)),'epsc')   
     
 end
 
+plot_presentation(U, U_old, S, V, V_old, T, n_asympt, full_output, rom_output, prom_output, [err_rom err_prom], x_all, y_all, [0 max(err_rom, [], 'all')], lb, ub, base_sample_prom);
+
 %% Construct pROM for Omega only
 
-if plotOmega 
+if omegaFlag 
     base_sample_prom_omega(:,1) = linspace(20,28,n_samples);
     base_sample_prom_omega(:,2) = 0.01 .* ones(n_samples,1);
     base_sample_prom_omega(:,3) = base_sample_rom(3) .* ones(n_samples,1);
@@ -328,7 +345,7 @@ end
 
 %% Construct pROM for more samples
 
-if plotMore
+if moreFlag
     prom_1 = prom;
     prom_1.n_samples = 2;
     
@@ -648,7 +665,7 @@ end
 
 %% balance out computational cost
 
-if plotComputation
+if computationFlag
 
     n_steps = 200;
 
@@ -700,7 +717,7 @@ if plotComputation
 end
 %% study off-line on-line computational cost
 
-if plotOffline
+if offlineFlag
     
     offline_rom = zeros(11,1); offline_prom = zeros(11,1);
     online_rom = zeros(11,1); online_prom = zeros(11,1);
@@ -758,4 +775,5 @@ if plotOffline
     fprintf('.. TEST: Computational cost documented \n');
 
 end
+
 % end

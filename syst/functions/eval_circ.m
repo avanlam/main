@@ -18,13 +18,13 @@ function [out] = eval_circ(factors)
     x0=repmat([0.0998 0.2468 2.0151 0.0339].',N,1);
 
     % Fixed parameters (Michaelis-Menten + Light)
-    params.nu=[factors(1) factors(2) NaN factors(3) NaN factors(4) NaN factors(5)]';
-    params.Ki=[factors(6) factors(7) NaN factors(8) NaN factors(9) NaN factors(10)]';
-    params.k=[NaN NaN factors(11) NaN factors(12) NaN factors(13)]';
-    params.nuc=factors(14);
-    params.Kc=factors(15);
-    params.K=factors(16); params.L0=factors(17);
-    params.omega=2*pi/factors(18);
+     params.nu=[factors(1) factors(2) NaN factors(3) NaN factors(4) NaN factors(5)]';
+     params.Ki=[factors(6) factors(7) NaN factors(8) NaN factors(9) NaN factors(10)]';
+     params.k=[NaN NaN factors(11) NaN factors(12) NaN factors(13)]';
+     params.nuc=factors(14);
+     params.Kc=factors(15);
+     params.K=factors(16); params.L0=factors(17);
+     params.omega=2*pi/factors(18);
     
     rng('default');
     % Intrinsic periods: Uniform distribution

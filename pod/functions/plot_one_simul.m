@@ -72,7 +72,7 @@ colours = colour_pairs('spring');
     plot(full.time(end-n_asympt(1):end),full.order_param,'color',colours{1}); hold on;
     plot(rom.time(end-n_asympt(2):end),rom.order_param,'color',colours{2}); 
     plot(prom.time(end-n_asympt(3):end),prom.order_param,'color',colours{3}); hold off;
-    xlabel('$t$','interpreter','latex'); ylabel('$R$','interpreter','latex'); ylim([0 1]);
+    xlabel('$t$','interpreter','latex'); ylabel('$\gamma$','interpreter','latex'); ylim([0 1]);
     title('Order parameter');
     
     lg = legend([ax1, ax2, ax3], ["FOM", "$ROM$","$pROM$"], 'interpreter', 'latex');

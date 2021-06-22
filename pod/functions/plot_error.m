@@ -37,7 +37,7 @@ t.TileIndexing = 'columnmajor';
     plot(z_all,err_z_fom, 'Color', colours{1}, 'LineWidth', 3, 'Marker', 'x', 'MarkerSize', 18); hold on; plot(z_all,err_z_rom, 'Color', colours{2}, 'LineWidth', 3, 'Marker', 'x', 'MarkerSize', 18); plot(z_all,err_z_prom, 'Color', colours{3}, 'LineWidth', 3, 'Marker', 'x', 'MarkerSize', 18); 
     xlabel('$\nu_6$'); set(gca,'ytick',[]); xlim([lb(3) ub(3)]); % ylim([0 0.02]);
 
-    lg = legend([ax1, ax2, ax3], ["FOM", "$ROM$","$pROM$"], 'interpreter', 'latex');
+    lg = legend([ax1, ax2, ax3], ["FOM", "$POD$","$pPOD$"], 'interpreter', 'latex');
     lg.Layout.Tile = 'north';
     title(t, '\textbf{Robustness to variations in parameters}', 'interpreter', 'latex', 'FontSize', 50)
     FIG.WindowState = 'fullscreen';

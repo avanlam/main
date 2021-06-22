@@ -1,7 +1,6 @@
-function [] = plot_evolution_poster(results, neurons, legend_cell, output)
+function [] = plot_poster(results, neurons, legend_cell, output)
 %UNTITLED3 Summary of this function goes here
 %   Detailed explanation goes here
-addpath(genpath('poster'))
 
 N = length(legend_cell); colours_rnked = zeros(N, 3);
 

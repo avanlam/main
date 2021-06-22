@@ -52,7 +52,7 @@ t.TileSpacing = 'tight';
     plot(z_all,err_z_prom_omega, 'Color', colours{4}, 'LineWidth', 3, 'Marker', 'x', 'MarkerSize', 18); 
     xlabel('$\nu_6$'); set(gca,'ytick',[]); xlim([lb(3) ub(3)]); % ylim([0 0.02]);
 
-    lg = legend([ax3, ax4, ax1, ax2], ["$pROM$", name, "FOM", "$ROM$"], 'interpreter', 'latex', 'NumColumns', 2);
+    lg = legend([ax3, ax4, ax1, ax2], ["$pPOD$", name, "FOM", "$POD$"], 'interpreter', 'latex', 'NumColumns', 2);
     lg.Layout.Tile = 'north';
     title(t, '\textbf{Robustness to variations in parameters}', 'interpreter', 'latex', 'FontSize', 50)
     FIG.WindowState = 'fullscreen';

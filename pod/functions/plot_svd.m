@@ -67,11 +67,11 @@ N = size(U{1}, 1);
     
     lg = legend(["$ROM$","$pROM$"], 'interpreter', 'latex');
     lg.Layout.Tile = 'north';
-    xlabel(t, '$i$','interpreter','latex', 'FontSize', 30); 
-    ylabel(t, '$\sigma_i/\sigma_1$','interpreter','latex', 'FontSize', 30);
-    sgtitle('\textbf{Decay of the SVD}', 'FontSize', 50, 'interpreter', 'latex');
+    xlabel(t, '$i$','interpreter','latex', 'FontSize', 40); 
+    ylabel(t, '$\sigma_i/\sigma_1$','interpreter','latex', 'FontSize', 40);
+    sgtitle('\textbf{Decay of the singular values}', 'FontSize', 50, 'interpreter', 'latex');
 
-%% Comparison of the five first columns (most important vectors)
+%% Comparison of the nine first columns (most important vectors)
     
     FIG3 = figure();
     colours = colour_pairs('duo');
@@ -82,9 +82,13 @@ N = size(U{1}, 1);
     for i = 1:9
         nexttile;
         
-        plot(1:N,abs(U{1}(:,i)),'Marker', 'x', 'color',colours{2}); hold on;
-        plot(1:N,abs(V{1}(:,i)),'Marker', 'x','color',colours{1}); hold off;
-        ylim([0 0.2]); % yticks([0.099, 0.1 0.101]);
+        if i==2 || i==5 || i ==8
+            U{1}(:,i) = - U{1}(:,i);
+        end
+        
+        plot(1:N,U{1}(:,i),'Marker', 'x', 'color',colours{2}); hold on;
+        plot(1:N,V{1}(:,i),'Marker', 'x','color',colours{1}); hold off;
+        ylim([-0.2 0.2]); % yticks([0.099, 0.1 0.101]);
         title(['$\textbf{v}_', num2str(i), '$'],'interpreter','latex', 'FontSize', 30, 'Units', 'normalized', 'Position', [0.5, 0.8, 0]); %
         
         if i ~= 1 && i ~= 4 && i ~= 7

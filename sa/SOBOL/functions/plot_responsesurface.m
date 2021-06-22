@@ -13,13 +13,12 @@ set(0,'DefaultAxesFontName', 'CMU Serif');
 n_samples = 100;                            % 1. Size of the base sample: total number of function evaluation will be N * (numDim + 2)
 seedNum = 123456789;                % 2. Seed for random number generator; put [] for autmatic randomization 
 numN = 10;
-funPath = '../../../syst';   % 4. Folder address: that includes model file, factor space
 funFile = 'eval_circ';              % 5. Model/function file: MATLAB m-file without .m extension
 
 outputs = {'sync_param','spectral_ampl','kuramoto_order'};
+names = {'$\rho$', '$S$', '$\gamma$'};
 
 %% Generate the base sample from a unit hypercube
-addpath(funPath);
 factors = read_factorSpace(''); % read in the factor space
 
 lb = factors.lb; ub = factors.ub; 
@@ -54,7 +53,7 @@ for o = 1:length(outputs)
     
     FIG = figure();
     FIG.WindowState = 'fullscreen';
-    sgtitle(['\textbf{Model response surface for} \verb|', output, '|'], 'interpreter','latex', 'FontSize', 40);
+    sgtitle(['\textbf{Model response surface for} \verb|', output, '| ( ', names{o}, ' )'], 'interpreter','latex', 'FontSize', 40);
     for i = 1:numDim
         [x, idx] = sort(A(:,i));
 
@@ -71,5 +70,5 @@ for o = 1:length(outputs)
         xlabel(legend_cell(i), 'interpreter','latex', 'FontSize', 30);
     end
 
-    saveas(FIG, ['../figures/', output, '/response_surface'], 'epsc');
+    saveas(FIG, ['figures/', output, '/response_surface'], 'epsc');
 end
