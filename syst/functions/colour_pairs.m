@@ -1,6 +1,6 @@
 function codes = colour_pairs(shade)
-%UNTITLED4 Summary of this function goes here
-%   Detailed explanation goes here
+%COLOUR_PAIRS : Returns two or three colour according to the shade or the
+% code
 
 Rust = [181, 90,48]./255;
 BurntCoral = [233,137,126]./255;

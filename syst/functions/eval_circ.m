@@ -1,11 +1,15 @@
 function [out] = eval_circ(factors)
+% EVAL_CIRC : Simulate the four-variable modified Goodwin model for the
+% circadian clock, given as input the eighteen constitutive parameters as
+% well as the number of oscillators and the chosen model output
+
 %% Parametrisation
 
     % System and reduced system
     N = factors(1);         % Number of oscillators
     factors(1) = [];
         
-    chosen_o = factors(end);% Chosen type of indicator for the model output
+    chosen_o = factors(end);% Chosen model output to measure synchronisation
 
     FinalTime=500;          
     Nsteps=2*FinalTime;

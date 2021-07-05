@@ -1,7 +1,8 @@
 function codes = colour_groups(shade, n)
-%UNTITLED4 Summary of this function goes here
-%   Detailed explanation goes here
+%COLOUR_GROUPS : Returns gradients of n colours for the given shade, as an
+% array of nx3
 
+% Pantone colours for Spring/Summer 2021
 BurntCoral = [233,137,126]./255;
 Raspberry = [210,56,108]./255;
 Rust = [181, 90,48]./255;

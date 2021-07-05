@@ -1,4 +1,8 @@
 function [ yA, yB, yC ] = func_eval (A, B, C, funPath, funFile, numN, chosen_o)
+% FUNC_EVAL : Auxiliary function to automate the simulation of the
+% circadian clock model for the matrices of constitutive parameter
+% configurations
+
 currDir = pwd;
 cd(funPath);
 [ N , numDim ] = size(A);

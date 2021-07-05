@@ -1,5 +1,5 @@
 function [full_outp_test, rom_outp_test, prom_outp_test] = accumulate_sample(sample, params, tau, time, U, V)
-%UNTITLED8 Summary of this function goes here
+%ACCUMULATE_SAMPLE Summary of this function goes here
 %   Detailed explanation goes here
 
 

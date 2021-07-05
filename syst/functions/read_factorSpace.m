@@ -1,4 +1,12 @@
 function [ factors ] = read_factorSpace(name)
+% READ_FACTORSPACE : Read the input factors from the indicated 'txt' file,
+% save the names and the boundaries
+
+% Programmed by Razi Sheikholeslami at GIWS, School of Environment
+% and Sustainability, University of Saskatchewan
+
+% Programming date: April 2018    version: 1.0
+% E-mail: razi.sheikholeslami@usask.ca
 
 file_name = strcat('factorSpace', name, '.txt');
 

@@ -1,6 +1,11 @@
 function [out] = circadian_rhs(t,x,params,tau)
+% CIRCADIAN_RHS : Computes the right-hand side of the differential
+% equations for the dynamics of the four-variable Goodwin oscillator, with
+% as input the time instant (t), the variable values (x), the parameters
+% (params), and the natural frequencies of the oscillators (tau)
+% Author : Niccolo Discacciati (EPFL)
 
-    %extract variables
+    % Extract variables
     X=x(1:4:end-3,:); Y=x(2:4:end-2,:); Z=x(3:4:end-1,:); V=x(4:4:end,:); F=mean(V,1);
     
     out=zeros(size(x));
@@ -17,7 +22,7 @@ function [out] = circadian_rhs(t,x,params,tau)
     % v_dot
     out(4:4:end)=params.k(7)*X-params.nu(8)*V./(params.Ki(8)+V);
     
-    % divide rhs by frequency of each oscillator (same quantity for all variables)
+    % Divide rhs by frequency of each oscillator (identical for all variables)
     out=out./repelem(tau,4,1);
 
 end

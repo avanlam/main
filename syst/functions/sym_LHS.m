@@ -1,4 +1,4 @@
-function [sample] = SymLHS( n , d , criterion , maxEval)
+function [sample] = sym_LHS( n , d , criterion , maxEval)
 %%
 % =============================================================== %
 % Description:
