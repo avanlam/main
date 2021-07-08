@@ -1,6 +1,9 @@
-% function [ rom_inp, prom_inp ] = pod_deim(n_osc)
+function [ ] = pod_control(n_osc)
+% POD_CONTROL orchestrates the entire optimisation problem applied to the
+% modified Goodwin model, visualising the loss function and the gradient 
+% descent
 
-n_osc = 100;
+%n_osc = 100;
 
 %% Control Parameters
 n_samples = 7;                 	% 1. Size of the base sample: total number of function evaluation will be N * (numDim + 2)
@@ -412,3 +415,6 @@ title(t, '\textbf{Optimisation: loss evolution}', 'interpreter','latex', 'FontSi
 
 FIG.WindowState = 'fullscreen';
 saveas(FIG,strcat('figures/control/opti_deltaloss_', num2str(n_latent_pod)),'epsc')
+
+end
+

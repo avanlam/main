@@ -1,6 +1,8 @@
-function [U, S, U_pod, U_old] = svd_pod(data,num_n, n_latent_pod)
-%UNTITLED6 Summary of this function goes here
-%   Detailed explanation goes here
+function [U, S, U_pod, U_old] = svd_pod(data, num_n, n_latent_pod)
+%SVD_POD coputes the singular value decomposition and the projection basis
+%required in the POD-procedure, on the snapshot matrix provided as 'data'
+%and given the indicated dimensions 'num_n'*'n_latent_pod' of the reduced
+%bases
 
 for i=1:4
     % SVD for X,Y,Z,V

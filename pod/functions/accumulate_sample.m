@@ -1,6 +1,16 @@
 function [full_outp_test, rom_outp_test, prom_outp_test] = accumulate_sample(sample, params, tau, time, U, V)
-%ACCUMULATE_SAMPLE Summary of this function goes here
-%   Detailed explanation goes here
+%ACCUMULATE_SAMPLE organises the simulation of the modified Goodwin model
+% into three different output structures, with the mean and standard
+% deviations across different sets of natural frequencies for the
+% oscillators described in tau
+% INPUT: 
+%   *'sample' contains the test values for the constitutive parameters
+%   at which the model will be sampled in the simulate_sample function.
+%   * the 'params' structure contains the standard or default values for the
+%   parameters
+%   * the 'time' structure contains the detail of the time integration
+%   * the 'U' and 'V' matrices represent the projection matrices for
+%   respectively the ROM and pROM POD-procedures
 
 
 [full_outp_test, rom_outp_test, prom_outp_test] = simulate_sample(sample, params, tau(:,1), time, U, V);

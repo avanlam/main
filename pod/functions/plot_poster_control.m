@@ -1,6 +1,6 @@
 function [] = plot_poster_control(L0_sample, lossfcn_L0, iter_fom, iter_rom, iter_prom, delta_loss_fom, delta_loss_rom, delta_loss_prom, n_latent_pod)
-%UNTITLED3 Summary of this function goes here
-%   Detailed explanation goes here
+%PLOT-POSTER-CONTROL draws the optimisation problem in a graph adapted in
+%terms of size and font to the scientific poster
 
 poster = 0;
 if poster 

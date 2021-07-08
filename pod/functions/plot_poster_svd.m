@@ -1,6 +1,6 @@
 function [] = plot_poster_svd(U, V, N)
-%UNTITLED3 Summary of this function goes here
-%   Detailed explanation goes here
+%PLOT-POSTER-SVD draws the singular valeu decomposition in a graph adapted
+% in terms of size and font to the scientific poster
 
 colours = colour_pairs('duo');
 colours{1} = [102,178,255]./255;

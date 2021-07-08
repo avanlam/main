@@ -1,4 +1,6 @@
 function [ pivots , X_star , X_scaled_mat, Y_offline ] = read_STAR_samples( VARS_inp )
+% Author: Saman Razavi in November 2019
+
 % for off-line mode
 currDir = pwd;
 cd ( VARS_inp.outFldr );

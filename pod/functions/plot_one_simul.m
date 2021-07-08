@@ -1,6 +1,6 @@
 function [FIG1, FIG2] = plot_one_simul(num_n, n_asympt, full, rom, prom)
-%UNTITLED7 Summary of this function goes here
-%   Detailed explanation goes here
+%PLOT_ONE_SIMUL draws the simulation solution and the synchronisation
+%outputs of a single time simulation of the modified Goodwin model
     
 if numel(n_asympt) == 1
     n_asympt = [n_asympt n_asympt n_asympt];

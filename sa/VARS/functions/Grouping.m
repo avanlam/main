@@ -1,5 +1,6 @@
 function [ Groups, relGrp, relGrp_all ] = Grouping( IVARS, H, ST, numDim, numGrp, num_samples, rankST, rankIVARS, ...
                                                    bnchmrkrankST, bnchmrkrankIVARS, plotFlg, name )
+% Author: Saman Razavi in November 2019
 
 %%cluster_analysis (ST);
 sens_MatrixIvars50 = squeeze(IVARS((H==0.5), :,:));

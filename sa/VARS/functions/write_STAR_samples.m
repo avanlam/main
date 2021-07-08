@@ -1,4 +1,5 @@
 function write_STAR_samples(pivots, X_star, X_scaled_mat, VARS_inp )
+% Author: Saman Razavi in November 2019
 
 if exist (VARS_inp.outFldr, 'dir') ~= 7
        mkdir ( VARS_inp.outFldr );

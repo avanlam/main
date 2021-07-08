@@ -1,6 +1,4 @@
 function [FIG] = plot_evolution(name, results, neurons, legendCell, tit, method, output)
-%UNTITLED3 Summary of this function goes here
-%   Detailed explanation goes here
 
 N = length(legendCell); colours_rnked = zeros(N, 3);
 

@@ -1,4 +1,6 @@
 function write_VARS_out(VARS_inp, VARS_out)
+% Author: Saman Razavi in November 2019
+
 % numCntrs   grdSize mdlFile  btsrpSize  btsrpCL
 starNum = size( VARS_out.Gamma, 2 );
 

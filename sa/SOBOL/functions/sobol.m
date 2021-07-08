@@ -1,11 +1,7 @@
 function [ Sobol_inp , Sobol_out ] = sobol(numN, output)
-% ****       Sobol' Variance-based Global Sensitivity Analysis        ****
-% ****     This numerical (Monte Carlo-based) integration method      ****
-% ****            is adopted from  Saltelli et al. (2008)             ****
-% ****  where page 164 states "This procedure is the best available   ****
-% **** today for computing indices based purely on model evaluations" ****
-% ****                 Written by © Saman Razavi 2018                 ****
-% ************************************************************************
+
+% Inspired by: Saman Razavi 2018, adopted from  Saltelli et al. (2008) 
+
 %% Control Parameters and Specifications
 N = 500;                                   % 1. Size of the base sample: total number of function evaluation will be N * (numDim + 2)
 seedNum = 123456789;                       % 2. Seed for random number generator; put [] for autmatic randomization 

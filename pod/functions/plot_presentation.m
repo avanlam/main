@@ -1,6 +1,7 @@
 function [] = plot_presentation(U, U_total, S, V, V_total, T, n_asympt, full, rom, prom, param, x, y, lim, lb, ub, base)
-%UNTITLED3 Summary of this function goes here
-%   Detailed explanation goes here
+%PLOT-PRESENTATION draws three different graphs explored in other
+%functions, but adapted here in size, font and description for
+%presentations
 
 set(0,'defaultAxesFontSize',40);
 N = size(U{1}, 1);

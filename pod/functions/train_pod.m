@@ -1,6 +1,7 @@
 function training = train_pod(input, time, base_sample, params, tau_all)
-%UNTITLED5 Summary of this function goes here
-%   Detailed explanation goes here
+%TRAIN_POD obtains the snapshot matrices for the POD-procedure through
+%simulation of the high-fidelity modified Goodwin model at the given
+%parameter configurations in 'input'
 
 data=zeros(input.n_trials*input.n_samples*(time.n_steps+1),4*input.n_osc);
 data_rhs=zeros(input.n_trials*(input.n_samples)*(time.n_steps+1),4*input.n_osc);

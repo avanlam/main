@@ -1,6 +1,16 @@
-function [FIG] = plot_grid(param, name, x, y, lim, lb, ub)
-%UNTITLED9 Summary of this function goes here
-%   Detailed explanation goes here
+function [FIG] = plot_grid(output, name, x, y, lim, lb, ub)
+%PLOT_GRID draws the synchronisation measures of the ROM, pROM and FOM when
+% two constitutive parameters are varied simultaneously across a grid
+% INPUT :
+%   * 'output' is a matrix containing the output to be drawn, where each
+%   column corresponds to a different model (ROM, pROM and FOM)
+%   * 'name' contains the name of the synchronisation output plotted
+%   * 'x' and 'y' gives the coordinates of the parameter grid
+%   * 'lb' and 'ub' indicate the lower and upper bounds on the parameter
+%   grid, which will define the ends of the graph
+%   * 'lim' indicates the bounds on the output's value, which will define
+%   the ends of the colorbar
+
 set(0,'defaultAxesFontSize',30);
 
 % Write points in meshgrid format
@@ -12,17 +22,17 @@ mesh_2 = reshape(tmp2',[],1);
     
 FIG = figure();
 
-t = tiledlayout(2,size(param,2));
+t = tiledlayout(2,size(output,2));
 t.TileSpacing = 'tight';
 
 FIG.WindowState = 'fullscreen';
 sgtitle(['\textbf{Kuramoto order parameter $$', name,'$$}'], 'interpreter', 'latex', 'FontSize', 45)        
 titles = {'FOM', 'POD', 'pPOD', 'pDEIM'};
    
-    for i = 1:size(param,2)
+    for i = 1:size(output,2)
         nexttile;
 
-        inter = scatteredInterpolant(mesh_1,mesh_2,param(:, i)); 
+        inter = scatteredInterpolant(mesh_1,mesh_2,output(:, i)); 
         surf(XX,YY,inter(XX, YY)); 
         colormap(parula); 
         view(0,90); shading interp; caxis(lim); 
@@ -33,14 +43,10 @@ titles = {'FOM', 'POD', 'pPOD', 'pDEIM'};
         xlabel('$\Omega$','interpreter','latex', 'FontSize', 40); 
         if i==1
             ylabel('$L_0$','interpreter','latex', 'FontSize', 40);
-%         else
-%             set( gca, 'YTick', [] );
         end
         
     end
     
-%     cb = colorbar('Location', 'north');
-%     set(cb, 'Position', [.25 .83 .5 .0281])
     cb = colorbar; cb.Layout.Tile = 'north';
     cb.TickLabelInterpreter = 'latex';
     

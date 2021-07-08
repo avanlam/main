@@ -1,7 +1,7 @@
-%%%% DEIM code for generating DEIM interpolation points
-% https://github.com/pehersto/adeim
-%%%%
 function [phi, P] = deim(uIn)
+%DEIM code for generating DEIM interpolation points
+% https://github.com/pehersto/adeim
+
 [n,m] = size(uIn);
 phi = zeros(m, 1);
 [~, phi(1)] = max(abs(uIn(:, 1)));

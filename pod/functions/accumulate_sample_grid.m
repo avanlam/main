@@ -1,13 +1,25 @@
-function [full_outp_test, rom_outp_test, prom_outp_test, deim_outp_test] = accumulate_sample_grid(x_all, y_all, params, tau, final_time, x0, dt, n_asympt, U, U_pod, V_pod)
-%UNTITLED8 Summary of this function goes here
-%   Detailed explanation goes here
+function [full_outp_test, rom_outp_test, prom_outp_test, deim_outp_test] = accumulate_sample_grid(x_all, y_all, params, tau, time, U, U_pod, V_pod)
+%ACCUMULATE_SAMPLE organises the simulation of the modified Goodwin model
+% into four different output structures, with the mean and standard
+% deviations across different sets of natural frequencies for the
+% oscillators described in tau, in the case of the test for a grid of 
+% parameter configurations
+% INPUT: 
+%   *'x_all' and 'y_all' contains the test values for the constitutive 
+%   parameters at which the model will be sampled in the
+%   simulate_sample_grid function.
+%   * the 'params' structure contains the standard or default values for the
+%   parameters
+%   * the 'time' structure contains the detail of the time integration
+%   * the 'U', 'U_pod' and 'V_pod' matrices represent the projection 
+%   matrices for respectively the DEIM procedure and the ROM + pROM 
+%   POD-procedures
 
-
-[full_outp_test, rom_outp_test, prom_outp_test] = simulate_sample_grid(x_all, y_all, params, tau(:,1), final_time, x0, dt, n_asympt, U, U_pod, V_pod);
+[full_outp_test, rom_outp_test, prom_outp_test] = simulate_sample_grid(x_all, y_all, params, tau(:,1), time.final_time, time.x0, time.dt, time.n_asympt, U, U_pod, V_pod);
 
 for i=2:size(tau,2)
 
-    [full_outp, rom_outp, prom_outp, deim_outp] = simulate_sample_grid(x_all, y_all, params, tau(:,i), final_time, x0, dt, n_asympt, U, U_pod, V_pod);
+    [full_outp, rom_outp, prom_outp, deim_outp] = simulate_sample_grid(x_all, y_all, params, tau(:,i), time.final_time, time.x0, time.dt, time.n_asympt, U, U_pod, V_pod);
 
     full_outp_test.sync_param(:,:,i) = full_outp.sync_param;
     full_outp_test.spectral(:,:,i) = full_outp.spectral;

@@ -1,6 +1,14 @@
-function [FIG] = plot_grid_error(param, name, x, y, lim, lb, ub, base)
-%UNTITLED9 Summary of this function goes here
-%   Detailed explanation goes here
+function [FIG] = plot_grid_error(output, name, x, y, lim, lb, ub, base)
+%PLOT_GRID_ERROR draws the two-dimensional errors of the ROM, pROM and FOM 
+% when two constitutive parameters are varied simultaneously across a grid
+%   * 'output' is a matrix containing the error to be drawn, where each
+%   column corresponds to a different model (ROM, pROM and FOM)
+%   * 'name' contains the name of the synchronisation output plotted
+%   * 'x' and 'y' gives the coordinates of the parameter grid
+%   * 'lb' and 'ub' indicate the lower and upper bounds on the parameter
+%   grid, which will define the ends of the graph
+%   * 'lim' indicates the bounds on the output's value, which will define
+%   the ends of the colorbar
 
 % Write points in meshgrid format
 [tmp1,tmp2]=meshgrid(x,y);
@@ -18,10 +26,10 @@ FIG.WindowState = 'fullscreen';
 sgtitle(['\textbf{Parametric variation on the $L_2$ error}'], 'interpreter', 'latex', 'FontSize', 50)        
 titles = {'ROM', 'pROM'};
    
-    for i = 1:size(param,2)
+    for i = 1:size(output,2)
         nexttile;
 
-        inter = scatteredInterpolant(mesh_1,mesh_2,param(:, i)); 
+        inter = scatteredInterpolant(mesh_1,mesh_2,output(:, i)); 
         surf(XX,YY,inter(XX, YY)); 
         colormap(parula); 
         view(0,90); shading interp; caxis(lim); 

@@ -1,4 +1,6 @@
 function rank_grp = group_ranking ( rank_indvl, numGrp )
+% Author: Saman Razavi in November 2019
+
 numDim = length (rank_indvl);
 grpSize = round ( numDim / numGrp );
 grpNum = 1; temp = 0;

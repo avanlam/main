@@ -1,6 +1,7 @@
 function FIG1 = plot_optimal_projection(full, U_pod, V_pod)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+%PLOT_OPTIMAL_PROJECTION draws the projections of the actual final-time
+% solution on the ROM and pROM sub-spaces, visualising the 'best'
+% approximation of the final solution in the space
 
 num_osc = size(U_pod,1)./4;
 

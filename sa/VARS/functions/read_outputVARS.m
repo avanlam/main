@@ -1,4 +1,6 @@
 function [ indices ] = read_outputVARS(funPath)
+% Author: Saman Razavi in November 2019
+
 filename = 'VARS_out_100.txt';
 currDir = pwd;
 cd(funPath);

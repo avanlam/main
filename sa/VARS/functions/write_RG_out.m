@@ -1,4 +1,5 @@
 function write_RG_out(VARS_inp, starNum, RG)
+% Author: Saman Razavi in November 2019
 
 if exist (VARS_inp.outFldr, 'dir') ~= 7
     mkdir ( VARS_inp.outFldr );

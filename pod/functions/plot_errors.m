@@ -1,6 +1,7 @@
 function [FIG] = plot_errors(name, x_all, y_all, z_all, xx, yy, zz, xx_omega, yy_omega, zz_omega, lb, ub)
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
+%PLOT_ERRORS draws the uni-dimensional errors of the ROM, pROM, FOM and the
+% pROM* (based on a single parameter base sample) when a single 
+% constitutive parameter is varied 
 
 colours = colour_pairs('springXL');
     

@@ -77,9 +77,6 @@ for o = 1:length(outputs)
     close all
 end
 
-% plot_evolution_poster(cat(3,indices(:,:,1,o), lb(:,:,1,o), ub(:,:,1,o)), neurons, legend_cell, outputs{3})
-% plot_presentation(cat(3,indices(:,:,1,o), lb(:,:,1,o), ub(:,:,1,o)), neurons, legend_cell, {ind_fo, rnk_fo}, output_array)
-
 %% Comparison between outputs
 
 ind_fo = reshape(indices(end, :, 1, :), [length(legend_cell), length(outputs)]);
@@ -90,6 +87,8 @@ rnk_to = reshape(indices(end, :, 4, :), [length(legend_cell), length(outputs)]);
 output_array = ["\verb|sync_param| ($\rho$)", "\verb|spectral_ampl| ($S$)", "\verb|kuramoto_order| ($\gamma$)"];
 plot_comparison({ind_fo, rnk_fo}, 'FO', output_array, factors.name);
 plot_comparison({ind_to, rnk_to}, 'TO', output_array, factors.name);
+% plot_evolution_poster(cat(3,indices(:,:,1,o), lb(:,:,1,o), ub(:,:,1,o)), neurons, legend_cell, outputs{3})
+% plot_presentation(cat(3,indices(:,:,1,o), lb(:,:,1,o), ub(:,:,1,o)), neurons, legend_cell, {ind_fo, rnk_fo}, output_array)
 
 close all
 

@@ -1,4 +1,14 @@
 function [full_outp, rom_outp, prom_outp, deim_outp] = simulate_sample_grid(sample, gridsize, params, tau, time, U, U_pod, V_pod)
+%SIMULATE_SAMPLE_GRID simulates the modified Goodwin sample at the parameter
+% configurations given and organises the output in a single structure 
+% INPUT: 
+%   *'sample' contains the test values for the constitutive parameters
+%   at which the model will be sampled in the simulate_sample function.
+%   * the 'params' structure contains the standard or default values for the
+%   parameters
+%   * the 'time' structure contains the detail of the time integration
+%   * the 'U' and 'V' matrices represent the projection matrices for
+%   respectively the ROM and pROM POD-procedures
 
 num_n = numel(tau);
 

@@ -1,6 +1,10 @@
 function [FIG1, FIG2, FIG3] = plot_svd(U, S, U_total, V, T, V_total)
-%UNTITLED3 Summary of this function goes here
-%   Detailed explanation goes here
+%PLOT_SVD illustrates the singular value decomposition of the ROM and pROM
+% with the help of three different graphs; the angle between the two
+% sub-spaces spanned by the ROM and pROM singular vectors, the decay of
+% their singular values, and the comparison of the first few singular
+% vectors
+
 set(0,'defaultAxesFontSize',35);
 N = size(U{1}, 1);
 

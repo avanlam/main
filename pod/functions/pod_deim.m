@@ -1,6 +1,11 @@
-% function [ rom_inp, prom_inp ] = pod_deim(n_osc)
+function [ ] = pod_deim(n_osc)
+%POD_DEIM orchestrates the entire model order reduction once the most
+% influential parameters are known; the parametric basis for the pROM is
+% obtained through simulation of the high-fidelity model, the singular 
+% value decompositions for both the ROM and pROM are analysed and a battery
+% of tests is applied to both the ROM and pROM simultaneously
 
-n_osc = 100;
+% n_osc = 100;
 
 %% Control Parameters
 n_samples = 7;                 	% 1. Size of the base sample: total number of function evaluation will be N * (numDim + 2)
@@ -776,4 +781,4 @@ if offlineFlag
 
 end
 
-% end
+end

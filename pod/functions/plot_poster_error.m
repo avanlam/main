@@ -1,6 +1,6 @@
 function [FIG] = plot_poster_error(param, ~, x, y, lim, lb, ub, base)
-%UNTITLED3 Summary of this function goes here
-%   Detailed explanation goes here
+%PLOT-POSTER-ERROR draws the two-dimensional error in a graph adapted in
+%terms of size and font to the scientific poster
 
 % Write points in meshgrid format
 [tmp1,tmp2]=meshgrid(x,y);

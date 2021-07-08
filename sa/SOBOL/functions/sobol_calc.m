@@ -1,4 +1,6 @@
 function [ FO, TO, Vy, MUy ] = sobol_calc (yA, yB, yC)
+% Author: Saman Razavi in November 2019
+
 [ N,  numDim ] = size(yC);
 f0 = mean([ yA; yB ]);  % sample mean - approximation of the mean of response surface
 MUy = f0;
