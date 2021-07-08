@@ -4,5 +4,6 @@
 *.eps
 *.pdf
 *.fig
+*.png
 # ignore generated folder files
 *.DS_Store
